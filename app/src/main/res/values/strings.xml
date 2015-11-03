@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name" translatable="false">Stella Pals</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Error Messages -->
+    <string name="em_unable_to_get_action_bar">Unable to get toolbar</string>
+    <string name="em_no_internet_connection">No internet connection</string>
+    <string name="em_invalid_username_or_password">Invalid username or password</string>
+    <string name="em_please_enter_a_username">Please enter a username</string>
+    <string name="em_username_has_been_taken">Username has already been taken</string>
+    <string name="em_please_enter_a_email">Please enter a email</string>
+    <string name="em_email_has_been_used_before">Email has been used before</string>
+    <string name="em_please_enter_a_valid_email">Please enter a valid email</string>
+    <string name="em_please_enter_a_password">Please enter a password</string>
+    <string name="em_invalid_password">Invalid password</string>
+
+    <!-- Hints -->
+    <string name="h_username_or_email">Username or email</string>
+    <string name="h_password">Password</string>
+    <string name="h_username">Username</string>
+    <string name="h_email">Email</string>
+    <string name="h_male">Male</string>
+    <string name="h_female">Female</string>
+
+    <!-- Button text -->
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+
+    <!-- Titles -->
+    <string name="title_activity_login">Login</string>
+    <string name="title_activity_splash">Splash</string>
+    <string name="title_activity_register">Register</string>
+</resources>

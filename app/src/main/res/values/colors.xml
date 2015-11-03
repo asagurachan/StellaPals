@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--Primaries-->
+    <color name="primary">#ffeb3b</color>
+    <color name="primary_dark">#c9b72e</color>
+    <color name="accent">#6892ff</color>
+    <color name="text_primary">#000</color>
+    <color name="navigation_bar">#000</color>
+    <color name="window_background">#fff</color>
+    <color name="drawer_background">#fff</color>
+
+    <!--Grayscale-->
+    <color name="black">#000</color>
+    <color name="black_fade_75">#bf000000</color>
+    <color name="black_fade_50">#80000000</color>
+    <color name="white">#FFF</color>
+
+    <!--Reds-->
+    <color name="red">#ff0000</color>
+    <color name="red_holo">#ff4444</color>
+
+</resources>
