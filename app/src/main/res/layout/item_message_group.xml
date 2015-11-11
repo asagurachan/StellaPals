@@ -5,15 +5,18 @@
 
     <ImageView
         android:id="@+id/iv_thumb"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_margin="5dp"
+        android:contentDescription="@string/cd_profile_picture"/>
 
     <TextView
         android:id="@+id/tv_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/iv_thumb"
-        android:layout_toEndOf="@+id/iv_thumb"/>
+        android:layout_toEndOf="@+id/iv_thumb"
+        android:textStyle="bold|italic" />
 
     <TextView
         android:id="@+id/tv_sneak_message"

@@ -1,8 +1,11 @@
 package com.stella.pals.frontend;
 
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AbsListView;
 import android.widget.ListView;
 
 import com.stella.pals.R;
@@ -11,6 +14,9 @@ import com.stella.pals.frontend.base.BaseActivity;
 import com.stella.pals.frontend.global.Global;
 
 public class MainActivity extends BaseActivity {
+
+    private ListView mLvMessageGroups;
+    private MessageGroupAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,16 +31,38 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initVariables() {
-        ListView lvMessageGroups = (ListView) findViewById(R.id.lv_message_groups);
-        MessageGroupAdapter adapter = new MessageGroupAdapter(this);
+        mLvMessageGroups = (ListView) findViewById(R.id.lv_message_groups);
+        mAdapter = new MessageGroupAdapter(this);
 
-        lvMessageGroups.setAdapter(adapter);
-        Global.updateMessageGroups(1, adapter);
+        mLvMessageGroups.setAdapter(mAdapter);
+        Global.updateMessageGroups(1, mAdapter);
     }
 
     @Override
     protected void initListeners() {
+        final SwipeRefreshLayout mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Log.d(TAG, "Refreshing");
 
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+        mLvMessageGroups.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (firstVisibleItem + visibleItemCount == totalItemCount) {
+                    Global.updateMessageGroups(Global.lastPage, mAdapter);
+                }
+            }
+        });
     }
 
     @Override

@@ -9,10 +9,17 @@
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
 
-    <ListView
-        android:id="@+id/lv_message_groups"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_layout"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@+id/toolbar"/>
+        android:layout_below="@+id/toolbar">
+
+        <ListView
+            android:id="@+id/lv_message_groups"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"/>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </RelativeLayout>

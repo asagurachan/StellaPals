@@ -32,4 +32,7 @@
     <string name="title_activity_login">Login</string>
     <string name="title_activity_splash">Splash</string>
     <string name="title_activity_register">Register</string>
+
+    <!-- Content Description -->
+    <string name="cd_profile_picture">Profile Picture</string>
 </resources>

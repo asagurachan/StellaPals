@@ -19,6 +19,7 @@ public class User {
     public User(String id, String username, String thumb, int age, byte sex) {
         mId = id;
         mUsername = username;
+//        mThumb = thumb.replace("thumbs/50x50", "photos");
         mThumb = thumb.replace("50x50", "180x180");
         mAge = age;
         mSex = sex;

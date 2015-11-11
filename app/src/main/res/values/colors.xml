@@ -20,4 +20,10 @@
     <color name="red">#ff0000</color>
     <color name="red_holo">#ff4444</color>
 
+    <!--Purple-->
+    <color name="purple">#f647f9</color>
+
+    <!--Blue-->
+    <color name="blue">#00c8ff</color>
+
 </resources>

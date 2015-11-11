@@ -1,6 +1,7 @@
 package com.stella.pals.frontend.adapter;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,10 @@ import android.widget.TextView;
 
 import com.stella.pals.R;
 import com.stella.pals.backend.model.MessageGroup;
+import com.stella.pals.backend.model.User;
+import com.stella.pals.frontend.base.BaseApplication;
 import com.stella.pals.frontend.global.Global;
+import com.stella.pals.utils.ImageUtil;
 
 /**
  * Created by DJ on 11/11/15.
@@ -48,15 +52,23 @@ public class MessageGroupAdapter extends BaseAdapter {
             viewHolder.mIvThumb = (ImageView) convertView.findViewById(R.id.iv_thumb);
             viewHolder.mTvUsername = (TextView) convertView.findViewById(R.id.tv_username);
             viewHolder.mTvSneakMessage = (TextView) convertView.findViewById(R.id.tv_sneak_message);
+
+            convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
         MessageGroup messageGroup = (MessageGroup) getItem(position);
 
-        Global.IMAGE_LOADER.displayImage(messageGroup.getmUser().getThumb(), viewHolder.mIvThumb);
+        Global.IMAGE_LOADER.displayImage(messageGroup.getmUser().getThumb(), viewHolder.mIvThumb, ImageUtil.displayPhotoOptions);
         viewHolder.mTvUsername.setText(messageGroup.getmUser().getmUsername());
         viewHolder.mTvSneakMessage.setText(messageGroup.getmSneakMessage());
+
+        if (messageGroup.getmUser().getmSex() == User.FEMALE) {
+            viewHolder.mTvUsername.setTextColor(ContextCompat.getColor(BaseApplication.getAppContext(), R.color.purple));
+        } else if (messageGroup.getmUser().getmSex() == User.MALE) {
+            viewHolder.mTvUsername.setTextColor(ContextCompat.getColor(BaseApplication.getAppContext(), R.color.blue));
+        }
 
         return convertView;
     }

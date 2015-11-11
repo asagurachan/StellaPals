@@ -15,6 +15,6 @@ public class ImageUtil {
 //            .showImageOnFail(R.drawable.profile_icon)
         .cacheOnDisk(true)
         .considerExifParams(true)
-        .displayer(new RoundedBitmapDisplayer(64))
+        .displayer(new RoundedBitmapDisplayer(180))
         .build();
 }

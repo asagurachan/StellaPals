@@ -24,6 +24,7 @@ import java.util.Map;
 
 /**
  * Created by DJ on 13/8/15.
+ * Project: Stella Pals
  */
 public class Global {
 
@@ -31,6 +32,8 @@ public class Global {
     public static ImageLoader IMAGE_LOADER;
     public static Map<String, String> COOKIES;
     public static ArrayList<MessageGroup> messageGroups = new ArrayList<MessageGroup>();
+    public static int lastPage= 1;
+    private static boolean updatingMessageGroups = false;
 
     public static void init(Context context) {
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).build();
@@ -52,7 +55,10 @@ public class Global {
     private static String cookiesToString() {
         StringBuilder cookiesString = new StringBuilder();
         for (Map.Entry entry : COOKIES.entrySet()) {
-            cookiesString.append(entry.getKey() + ":" + entry.getValue() + ";");
+            cookiesString.append(entry.getKey());
+            cookiesString.append(":");
+            cookiesString.append(entry.getValue());
+            cookiesString.append(";");
         }
 
         return cookiesString.toString();
@@ -77,38 +83,43 @@ public class Global {
     }
 
     public static void updateMessageGroups(int page, final BaseAdapter adapter) {
-        new APIManager(BaseApplication.getAppContext(), APIConstants.PM, APIParams.messageGroup(page), true) {
-            @Override
-            public void onPostTask() {
-                Elements threads = mDocumentSoup.getElementById("threads_left").children();
-                int size = threads.size();
-                for (int x = 0; x < size; x++) {
-                    Element currentThread = threads.get(x);
-                    Elements thumbnail = currentThread.getElementsByClass("th_user_thumb");
-                    String id = currentThread.id().replace("thread_", "");
+        if (!updatingMessageGroups) {
+            updatingMessageGroups = true;
+            new APIManager(BaseApplication.getAppContext(), APIConstants.PM, APIParams.messageGroup(page), true) {
+                @Override
+                public void onPostTask() {
+                    Elements threads = mDocumentSoup.getElementById("threads_left").children();
+                    int size = threads.size();
+                    for (int x = 0; x < size; x++) {
+                        Element currentThread = threads.get(x);
+                        Elements thumbnail = currentThread.getElementsByClass("th_user_thumb");
+                        String id = currentThread.id().replace("thread_", "");
 
-                    Elements userInfo = currentThread.getElementsByClass("tui_username");
-                    String username = userInfo.get(0).getElementsByClass("tui_el").get(0).ownText();
-                    String thumb = currentThread.getElementsByClass("th_user_thumb").get(0).getElementsByClass("thumb").get(0).attr("src");
-                    if (thumb.isEmpty()) {
-                        thumb = currentThread.getElementsByClass("th_user_thumb").get(0).getElementsByClass("thumb").get(1).attr("src");
+                        Elements userInfo = currentThread.getElementsByClass("tui_username");
+                        String username = userInfo.get(0).getElementsByClass("tui_el").get(0).ownText();
+                        String thumb = currentThread.getElementsByClass("th_user_thumb").get(0).getElementsByClass("thumb").get(0).attr("src");
+                        if (thumb.isEmpty()) {
+                            thumb = currentThread.getElementsByClass("th_user_thumb").get(0).getElementsByClass("thumb").get(1).attr("src");
+                        }
+                        int age = Integer.parseInt(userInfo.get(0).getElementsByClass("tui_age").get(0).text().replace(", ", ""));
+                        byte sex = currentThread.getElementsByClass("th_user_thumb").get(0).child(0).hasClass("female") ? User.FEMALE : User.MALE;
+                        User user = new User(id, username, thumb, age, sex);
+
+                        String message = currentThread.getElementsByClass("th_snippet").get(0).ownText();
+                        MessageGroup messageGroup = new MessageGroup(user, message);
+                        messageGroups.add(messageGroup);
                     }
-                    int age = Integer.parseInt(userInfo.get(0).getElementsByClass("tui_age").get(0).text().replace(", ", ""));
-                    byte sex = thumbnail.hasClass("female") ? User.FEMALE : User.MALE;
-                    User user = new User(id, username, thumb, age, sex);
 
-                    String message = currentThread.getElementsByClass("th_snippet").get(0).ownText();
-                    MessageGroup messageGroup = new MessageGroup(user, message);
-                    messageGroups.add(messageGroup);
+                    if (adapter != null) {
+                        adapter.notifyDataSetChanged();
+                    }
+                    Global.lastPage++;
+                    updatingMessageGroups = false;
+
+                    super.onPostTask();
                 }
-
-                if (adapter != null) {
-                    adapter.notifyDataSetChanged();
-                }
-
-                super.onPostTask();
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
     }
 
 }
