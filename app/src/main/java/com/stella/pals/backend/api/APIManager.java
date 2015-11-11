@@ -1,6 +1,7 @@
 package com.stella.pals.backend.api;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,7 +10,9 @@ import android.view.ViewGroup;
 
 import com.stella.pals.R;
 import com.stella.pals.frontend.base.BaseActivity;
+import com.stella.pals.frontend.base.BaseApplication;
 import com.stella.pals.frontend.global.Global;
+import com.stella.pals.frontend.login.LoginActivity;
 import com.stella.pals.interfaces.APIInterface;
 import com.stella.pals.utils.DeviceUtil;
 import com.stella.pals.utils.ToastUtil;
@@ -39,9 +42,14 @@ public abstract class APIManager extends AsyncTask<Integer, Integer, Integer> im
     protected Document mDocumentSoup;
 
     public APIManager(Context context, String url, Map<String, String> data) {
+        this(context, url, data, false);
+    }
+
+    public APIManager(Context context, String url, Map<String, String> data, boolean showOverlay) {
         mContext = new WeakReference<Context>(context);
         mUrl = "http://www.interpals.net/".concat(url);
         mData = data;
+        mShowOverlay = showOverlay;
     }
 
     public APIManager setShowOverlay(boolean showOverlay) {
@@ -81,8 +89,11 @@ public abstract class APIManager extends AsyncTask<Integer, Integer, Integer> im
     }
 
     private void getCookies(Connection.Response responseSoup) {
-        Global.setCookies(responseSoup.cookies());
-        Global.initCookiesFromPreferences();
+        Map<String, String> cookies = responseSoup.cookies();
+        if (!cookies.isEmpty()) {
+            Global.setCookies(cookies);
+            Global.initCookiesFromPreferences();
+        }
     }
 
     @Override
@@ -118,22 +129,32 @@ public abstract class APIManager extends AsyncTask<Integer, Integer, Integer> im
         Context context = mContext.get();
 
         if (responseCode == HttpURLConnection.HTTP_OK) {
-            onPostTask();
+            if (!mDocumentSoup.location().contains(APIConstants.LOGIN)) {
+                onPostTask();
+            } else {
+                Intent intent = new Intent(BaseApplication.getAppContext(), LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                BaseApplication.getAppContext().startActivity(intent);
+            }
         } else if (responseCode != NO_CONNECTION) {
             onPostFailTask();
             ToastUtil.makeShortToast(context, String.valueOf(responseCode));
         } else {
             ToastUtil.makeShortToast(context, context.getString(R.string.em_no_internet_connection));
         }
+    }
 
+    @Override
+    public void onPostTask() {
         if (mShowOverlay) {
             removeLoadingOverlay(mContext);
         }
     }
 
     @Override
-    public abstract void onPostTask();
-
-    @Override
-    public abstract void onPostFailTask();
+    public void onPostFailTask() {
+        if (mShowOverlay) {
+            removeLoadingOverlay(mContext);
+        }
+    }
 }

@@ -1,12 +1,24 @@
 package com.stella.pals.frontend.global;
 
 import android.content.Context;
+import android.os.AsyncTask;
+import android.widget.BaseAdapter;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.stella.pals.backend.api.APIConstants;
+import com.stella.pals.backend.api.APIManager;
+import com.stella.pals.backend.api.APIParams;
+import com.stella.pals.backend.model.MessageGroup;
+import com.stella.pals.backend.model.User;
+import com.stella.pals.frontend.base.BaseApplication;
 import com.stella.pals.utils.SharedPreferencesUtil;
 import com.stella.pals.utils.StringUtil;
 
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +30,7 @@ public class Global {
     public static final boolean PRODUCTION = false;
     public static ImageLoader IMAGE_LOADER;
     public static Map<String, String> COOKIES;
+    public static ArrayList<MessageGroup> messageGroups = new ArrayList<MessageGroup>();
 
     public static void init(Context context) {
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).build();
@@ -61,6 +74,41 @@ public class Global {
         }
 
         return cookies;
+    }
+
+    public static void updateMessageGroups(int page, final BaseAdapter adapter) {
+        new APIManager(BaseApplication.getAppContext(), APIConstants.PM, APIParams.messageGroup(page), true) {
+            @Override
+            public void onPostTask() {
+                Elements threads = mDocumentSoup.getElementById("threads_left").children();
+                int size = threads.size();
+                for (int x = 0; x < size; x++) {
+                    Element currentThread = threads.get(x);
+                    Elements thumbnail = currentThread.getElementsByClass("th_user_thumb");
+                    String id = currentThread.id().replace("thread_", "");
+
+                    Elements userInfo = currentThread.getElementsByClass("tui_username");
+                    String username = userInfo.get(0).getElementsByClass("tui_el").get(0).ownText();
+                    String thumb = currentThread.getElementsByClass("th_user_thumb").get(0).getElementsByClass("thumb").get(0).attr("src");
+                    if (thumb.isEmpty()) {
+                        thumb = currentThread.getElementsByClass("th_user_thumb").get(0).getElementsByClass("thumb").get(1).attr("src");
+                    }
+                    int age = Integer.parseInt(userInfo.get(0).getElementsByClass("tui_age").get(0).text().replace(", ", ""));
+                    byte sex = thumbnail.hasClass("female") ? User.FEMALE : User.MALE;
+                    User user = new User(id, username, thumb, age, sex);
+
+                    String message = currentThread.getElementsByClass("th_snippet").get(0).ownText();
+                    MessageGroup messageGroup = new MessageGroup(user, message);
+                    messageGroups.add(messageGroup);
+                }
+
+                if (adapter != null) {
+                    adapter.notifyDataSetChanged();
+                }
+
+                super.onPostTask();
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
 }

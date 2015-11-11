@@ -3,9 +3,12 @@ package com.stella.pals.frontend;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 
 import com.stella.pals.R;
+import com.stella.pals.frontend.adapter.MessageGroupAdapter;
 import com.stella.pals.frontend.base.BaseActivity;
+import com.stella.pals.frontend.global.Global;
 
 public class MainActivity extends BaseActivity {
 
@@ -22,7 +25,11 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initVariables() {
+        ListView lvMessageGroups = (ListView) findViewById(R.id.lv_message_groups);
+        MessageGroupAdapter adapter = new MessageGroupAdapter(this);
 
+        lvMessageGroups.setAdapter(adapter);
+        Global.updateMessageGroups(1, adapter);
     }
 
     @Override

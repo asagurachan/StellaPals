@@ -6,6 +6,19 @@ package com.stella.pals.backend.model;
  */
 public class MessageGroup {
 
+    private User mUser;
+    private String mSneakMessage;
 
+    public MessageGroup(User user, String sneakMessage) {
+        mUser = user;
+        mSneakMessage = sneakMessage;
+    }
 
+    public String getmSneakMessage() {
+        return mSneakMessage;
+    }
+
+    public User getmUser() {
+        return mUser;
+    }
 }

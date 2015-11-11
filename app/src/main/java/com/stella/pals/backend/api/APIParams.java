@@ -36,4 +36,12 @@ public class APIParams {
         return values;
     }
 
+    public static Map<String, String> messageGroup(int page) {
+        Map<String, String> values = new HashMap<String, String>(2);
+        values.put("view", "paged");
+        values.put("page", String.valueOf(page));
+
+        return values;
+    }
+
 }
