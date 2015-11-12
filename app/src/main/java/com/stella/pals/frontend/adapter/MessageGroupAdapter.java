@@ -58,22 +58,29 @@ public class MessageGroupAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        MessageGroup messageGroup = (MessageGroup) getItem(position);
+        if (viewHolder.position != position) {
+            MessageGroup messageGroup = (MessageGroup) getItem(position);
 
-        Global.IMAGE_LOADER.displayImage(messageGroup.getmUser().getThumb(), viewHolder.mIvThumb, ImageUtil.displayPhotoOptions);
-        viewHolder.mTvUsername.setText(messageGroup.getmUser().getmUsername());
-        viewHolder.mTvSneakMessage.setText(messageGroup.getmSneakMessage());
 
-        if (messageGroup.getmUser().getmSex() == User.FEMALE) {
-            viewHolder.mTvUsername.setTextColor(ContextCompat.getColor(BaseApplication.getAppContext(), R.color.purple));
-        } else if (messageGroup.getmUser().getmSex() == User.MALE) {
-            viewHolder.mTvUsername.setTextColor(ContextCompat.getColor(BaseApplication.getAppContext(), R.color.blue));
+            viewHolder.mTvUsername.setText(messageGroup.getmUser().getmUsername());
+            viewHolder.mTvSneakMessage.setText(messageGroup.getmSneakMessage());
+
+            if (messageGroup.getmUser().getmSex() == User.FEMALE) {
+                viewHolder.mTvUsername.setTextColor(ContextCompat.getColor(BaseApplication.getAppContext(), R.color.purple));
+                Global.IMAGE_LOADER.displayImage(messageGroup.getmUser().getThumb(), viewHolder.mIvThumb, ImageUtil.displayFemalePhotoOptions);
+            } else if (messageGroup.getmUser().getmSex() == User.MALE) {
+                viewHolder.mTvUsername.setTextColor(ContextCompat.getColor(BaseApplication.getAppContext(), R.color.blue));
+                Global.IMAGE_LOADER.displayImage(messageGroup.getmUser().getThumb(), viewHolder.mIvThumb, ImageUtil.displayMalePhotoOptions);
+            }
+
+            viewHolder.position = position;
         }
 
         return convertView;
     }
 
     class ViewHolder {
+        int position;
         TextView mTvUsername, mTvSneakMessage;
         ImageView mIvThumb;
     }

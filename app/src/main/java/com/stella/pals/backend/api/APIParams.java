@@ -44,4 +44,12 @@ public class APIParams {
         return values;
     }
 
+    public static Map<String, String> messages(String thread, int page) {
+        Map<String, String> values = new HashMap<String, String>(2);
+        values.put("thread_id", thread);
+        values.put("page", String.valueOf(page));
+
+        return values;
+    }
+
 }

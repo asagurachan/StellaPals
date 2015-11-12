@@ -1,17 +1,22 @@
 package com.stella.pals.frontend;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.stella.pals.R;
 import com.stella.pals.frontend.adapter.MessageGroupAdapter;
 import com.stella.pals.frontend.base.BaseActivity;
 import com.stella.pals.frontend.global.Global;
+import com.stella.pals.frontend.thread.ThreadActivity;
 
 public class MainActivity extends BaseActivity {
 
@@ -61,6 +66,13 @@ public class MainActivity extends BaseActivity {
                 if (firstVisibleItem + visibleItemCount == totalItemCount) {
                     Global.updateMessageGroups(Global.lastPage, mAdapter);
                 }
+            }
+        });
+        mLvMessageGroups.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(MainActivity.this, ThreadActivity.class);
+                ActivityCompat.startActivity(MainActivity.this, intent, null);
             }
         });
     }

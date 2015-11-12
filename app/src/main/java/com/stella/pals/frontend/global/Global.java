@@ -2,6 +2,7 @@ package com.stella.pals.frontend.global;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.BaseAdapter;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -27,6 +28,8 @@ import java.util.Map;
  * Project: Stella Pals
  */
 public class Global {
+
+    private static final String TAG = Global.class.getSimpleName();
 
     public static final boolean PRODUCTION = false;
     public static ImageLoader IMAGE_LOADER;
@@ -91,23 +94,31 @@ public class Global {
                     Elements threads = mDocumentSoup.getElementById("threads_left").children();
                     int size = threads.size();
                     for (int x = 0; x < size; x++) {
-                        Element currentThread = threads.get(x);
-                        Elements thumbnail = currentThread.getElementsByClass("th_user_thumb");
-                        String id = currentThread.id().replace("thread_", "");
+                        try {
+                            Element currentThread = threads.get(x);
+//                            Elements thumbnail = currentThread.getElementsByClass("th_user_thumb");
+                            String id = currentThread.id().replace("thread_", "");
 
-                        Elements userInfo = currentThread.getElementsByClass("tui_username");
-                        String username = userInfo.get(0).getElementsByClass("tui_el").get(0).ownText();
-                        String thumb = currentThread.getElementsByClass("th_user_thumb").get(0).getElementsByClass("thumb").get(0).attr("src");
-                        if (thumb.isEmpty()) {
-                            thumb = currentThread.getElementsByClass("th_user_thumb").get(0).getElementsByClass("thumb").get(1).attr("src");
+                            Elements userInfo = currentThread.getElementsByClass("tui_username");
+                            String username = userInfo.get(0).getElementsByClass("tui_el").get(0).ownText();
+                            String thumb = currentThread.getElementsByClass("th_user_thumb").get(0).getElementsByClass("thumb").get(0).attr("src");
+                            if (thumb.isEmpty()) {
+                                thumb = currentThread.getElementsByClass("th_user_thumb").get(0).getElementsByClass("thumb").get(1).attr("src");
+                            }
+                            String ageStr = userInfo.get(0).getElementsByClass("tui_age").get(0).text();
+                            int age = 0;
+                            if (!ageStr.trim().isEmpty()) {
+                                age = Integer.parseInt(ageStr.replace(", ", ""));
+                            }
+                            byte sex = currentThread.getElementsByClass("th_user_thumb").get(0).child(0).hasClass("female") ? User.FEMALE : User.MALE;
+                            User user = new User(id, username, thumb, age, sex);
+
+                            String message = currentThread.getElementsByClass("th_snippet").get(0).ownText();
+                            MessageGroup messageGroup = new MessageGroup(user, message);
+                            messageGroups.add(messageGroup);
+                        } catch (NumberFormatException e) {
+                            Log.e(TAG, e.getMessage(), e);
                         }
-                        int age = Integer.parseInt(userInfo.get(0).getElementsByClass("tui_age").get(0).text().replace(", ", ""));
-                        byte sex = currentThread.getElementsByClass("th_user_thumb").get(0).child(0).hasClass("female") ? User.FEMALE : User.MALE;
-                        User user = new User(id, username, thumb, age, sex);
-
-                        String message = currentThread.getElementsByClass("th_snippet").get(0).ownText();
-                        MessageGroup messageGroup = new MessageGroup(user, message);
-                        messageGroups.add(messageGroup);
                     }
 
                     if (adapter != null) {
