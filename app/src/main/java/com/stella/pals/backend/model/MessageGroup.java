@@ -14,11 +14,11 @@ public class MessageGroup {
         mSneakMessage = sneakMessage;
     }
 
-    public String getmSneakMessage() {
+    public String getSneakMessage() {
         return mSneakMessage;
     }
 
-    public User getmUser() {
+    public User getUser() {
         return mUser;
     }
 }

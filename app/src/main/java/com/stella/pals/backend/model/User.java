@@ -33,7 +33,7 @@ public class User {
         return mName;
     }
 
-    public String getmUsername() {
+    public String getUsername() {
         return mUsername;
     }
 
@@ -41,7 +41,7 @@ public class User {
         return mThumb;
     }
 
-    public byte getmSex() {
+    public byte getSex() {
         return mSex;
     }
 }

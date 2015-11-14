@@ -52,6 +52,7 @@ public class MessageGroupAdapter extends BaseAdapter {
             viewHolder.mIvThumb = (ImageView) convertView.findViewById(R.id.iv_thumb);
             viewHolder.mTvUsername = (TextView) convertView.findViewById(R.id.tv_username);
             viewHolder.mTvSneakMessage = (TextView) convertView.findViewById(R.id.tv_sneak_message);
+            viewHolder.position = -1;
 
             convertView.setTag(viewHolder);
         } else {
@@ -62,15 +63,17 @@ public class MessageGroupAdapter extends BaseAdapter {
             MessageGroup messageGroup = (MessageGroup) getItem(position);
 
 
-            viewHolder.mTvUsername.setText(messageGroup.getmUser().getmUsername());
-            viewHolder.mTvSneakMessage.setText(messageGroup.getmSneakMessage());
+            viewHolder.mTvUsername.setText(messageGroup.getUser().getUsername());
+            viewHolder.mTvSneakMessage.setText(messageGroup.getSneakMessage());
 
-            if (messageGroup.getmUser().getmSex() == User.FEMALE) {
+            User user = messageGroup.getUser();
+
+            if (user.getSex() == User.FEMALE) {
                 viewHolder.mTvUsername.setTextColor(ContextCompat.getColor(BaseApplication.getAppContext(), R.color.purple));
-                Global.IMAGE_LOADER.displayImage(messageGroup.getmUser().getThumb(), viewHolder.mIvThumb, ImageUtil.displayFemalePhotoOptions);
-            } else if (messageGroup.getmUser().getmSex() == User.MALE) {
+                Global.IMAGE_LOADER.displayImage(messageGroup.getUser().getThumb(), viewHolder.mIvThumb, ImageUtil.displayFemalePhotoOptions);
+            } else if (user.getSex() == User.MALE) {
                 viewHolder.mTvUsername.setTextColor(ContextCompat.getColor(BaseApplication.getAppContext(), R.color.blue));
-                Global.IMAGE_LOADER.displayImage(messageGroup.getmUser().getThumb(), viewHolder.mIvThumb, ImageUtil.displayMalePhotoOptions);
+                Global.IMAGE_LOADER.displayImage(user.getThumb(), viewHolder.mIvThumb, ImageUtil.displayMalePhotoOptions);
             }
 
             viewHolder.position = position;

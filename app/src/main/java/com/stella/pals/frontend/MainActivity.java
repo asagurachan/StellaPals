@@ -72,6 +72,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(MainActivity.this, ThreadActivity.class);
+                intent.putExtra("thread_id", Global.messageGroups.get(position).getUser().getId());
                 ActivityCompat.startActivity(MainActivity.this, intent, null);
             }
         });

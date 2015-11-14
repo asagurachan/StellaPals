@@ -16,7 +16,7 @@
         android:layout_below="@+id/toolbar">
 
         <ListView
-            android:id="@+id/lv_message_groups"
+            android:id="@+id/lv_messages"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"/>
 
