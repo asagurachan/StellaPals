@@ -110,6 +110,10 @@ public abstract class APIManager extends AsyncTask<Integer, Integer, Integer> im
         if (DeviceUtil.hasInternetConnection(mContext.get())) {
             try {
                 Connection connectionSoup = Jsoup.connect(mUrl).cookies(Global.COOKIES).data(mData);
+//                        .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
+//                        .header("Accept-Encoding", "gzip, deflate, sdch")
+//                        .userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36")
+//                        .referrer("http://www.interpals.net/pm.php");
                 Connection.Response responseSoup = connectionSoup.execute();
                 getCookies(responseSoup);
                 mDocumentSoup = responseSoup.parse();
@@ -129,11 +133,11 @@ public abstract class APIManager extends AsyncTask<Integer, Integer, Integer> im
         Context context = mContext.get();
 
         if (responseCode == HttpURLConnection.HTTP_OK) {
-            if (!mDocumentSoup.location().contains(APIConstants.LOGIN)) {
+            if (mDocumentSoup != null && !mDocumentSoup.location().contains(APIConstants.LOGIN)) {
                 onPostTask();
-            } else {
+            } else if (!mUrl.equals(APIConstants.LOGIN)) {
                 Intent intent = new Intent(BaseApplication.getAppContext(), LoginActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 BaseApplication.getAppContext().startActivity(intent);
             }
         } else if (responseCode != NO_CONNECTION) {

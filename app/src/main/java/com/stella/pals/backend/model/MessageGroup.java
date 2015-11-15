@@ -8,10 +8,14 @@ public class MessageGroup {
 
     private User mUser;
     private String mSneakMessage;
+    private String mTime;
+    private boolean mNew;
 
-    public MessageGroup(User user, String sneakMessage) {
+    public MessageGroup(User user, String sneakMessage, String time, boolean newMessage) {
         mUser = user;
         mSneakMessage = sneakMessage;
+        mTime = time;
+        mNew = newMessage;
     }
 
     public String getSneakMessage() {
@@ -20,5 +24,13 @@ public class MessageGroup {
 
     public User getUser() {
         return mUser;
+    }
+
+    public String getTime() {
+        return mTime;
+    }
+
+    public boolean isNew() {
+        return mNew;
     }
 }

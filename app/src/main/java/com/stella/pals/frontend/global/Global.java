@@ -36,7 +36,9 @@ public class Global {
     public static Map<String, String> COOKIES;
     public static ArrayList<MessageGroup> messageGroups = new ArrayList<MessageGroup>();
     public static int lastPage= 1;
+    public static String username;
     private static boolean updatingMessageGroups = false;
+    public static boolean randomTest = false;
 
     public static void init(Context context) {
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).build();
@@ -105,6 +107,7 @@ public class Global {
                             if (thumb.isEmpty()) {
                                 thumb = currentThread.getElementsByClass("th_user_thumb").get(0).getElementsByClass("thumb").get(1).attr("src");
                             }
+                            String time = currentThread.getElementsByClass("tui_last_time").text();
                             String ageStr = userInfo.get(0).getElementsByClass("tui_age").get(0).text();
                             int age = 0;
                             if (!ageStr.trim().isEmpty()) {
@@ -112,9 +115,10 @@ public class Global {
                             }
                             byte sex = currentThread.getElementsByClass("th_user_thumb").get(0).child(0).hasClass("female") ? User.FEMALE : User.MALE;
                             User user = new User(id, username, thumb, age, sex);
+                            boolean newMessage = currentThread.hasClass("new");
 
                             String message = currentThread.getElementsByClass("th_snippet").get(0).ownText();
-                            MessageGroup messageGroup = new MessageGroup(user, message);
+                            MessageGroup messageGroup = new MessageGroup(user, message, time, newMessage);
                             messageGroups.add(messageGroup);
                         } catch (NumberFormatException e) {
                             Log.e(TAG, e.getMessage(), e);

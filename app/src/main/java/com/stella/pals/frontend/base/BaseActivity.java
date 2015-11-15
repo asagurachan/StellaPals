@@ -7,9 +7,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 
 import com.stella.pals.R;
-import com.stella.pals.frontend.global.Global;
 
 /**
  * Created by DJ on 13/8/15.
@@ -17,16 +17,17 @@ import com.stella.pals.frontend.global.Global;
 public abstract class BaseActivity extends AppCompatActivity {
 
     public static final String TAG = BaseActivity.class.getSimpleName();
-    private Toolbar toolbar;
+    protected Toolbar mToolbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResource());
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (mToolbar != null) {
+            setSupportActionBar(mToolbar);
+
             try {
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -34,9 +35,9 @@ public abstract class BaseActivity extends AppCompatActivity {
                 Log.i(TAG, getString(R.string.em_unable_to_get_action_bar));
             }
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                toolbar.setTitleTextColor(getResources().getColor(R.color.black));
+                mToolbar.setTitleTextColor(getResources().getColor(R.color.black));
             } else {
-                toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.black));
+                mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.black));
             }
         }
 
@@ -52,7 +53,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected abstract int getLayoutResource();
 
     protected void setActionBarIcon(int iconRes) {
-        toolbar.setNavigationIcon(iconRes);
+        mToolbar.setNavigationIcon(iconRes);
     }
 
     protected void init(Bundle savedInstanceState) {
@@ -65,14 +66,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected abstract void initVariables();
-    protected abstract void initListeners();
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (Global.IMAGE_LOADER != null) {
-            Global.IMAGE_LOADER.clearMemoryCache();
-        }
+    protected void initListeners() {
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
     }
 
 }

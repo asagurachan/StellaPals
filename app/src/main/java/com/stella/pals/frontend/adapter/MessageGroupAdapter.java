@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.stella.pals.R;
@@ -23,8 +24,10 @@ import com.stella.pals.utils.ImageUtil;
 public class MessageGroupAdapter extends BaseAdapter {
 
     private LayoutInflater mLayoutInflater;
+    private Context mContext;
 
     public MessageGroupAdapter(Context context) {
+        mContext = context;
         mLayoutInflater = LayoutInflater.from(context);
     }
 
@@ -49,9 +52,11 @@ public class MessageGroupAdapter extends BaseAdapter {
 
         if (convertView == null) {
             convertView = mLayoutInflater.inflate(R.layout.item_message_group, parent, false);
+            viewHolder.mParent = (RelativeLayout) convertView.findViewById(R.id.parent);
             viewHolder.mIvThumb = (ImageView) convertView.findViewById(R.id.iv_thumb);
             viewHolder.mTvUsername = (TextView) convertView.findViewById(R.id.tv_username);
             viewHolder.mTvSneakMessage = (TextView) convertView.findViewById(R.id.tv_sneak_message);
+            viewHolder.mTvTime = (TextView) convertView.findViewById(R.id.tv_time);
             viewHolder.position = -1;
 
             convertView.setTag(viewHolder);
@@ -62,9 +67,15 @@ public class MessageGroupAdapter extends BaseAdapter {
         if (viewHolder.position != position) {
             MessageGroup messageGroup = (MessageGroup) getItem(position);
 
+            if (messageGroup.isNew()) {
+                viewHolder.mParent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.primary));
+            } else {
+                viewHolder.mParent.setBackgroundColor(ContextCompat.getColor(mContext, android.R.color.transparent));
+            }
 
             viewHolder.mTvUsername.setText(messageGroup.getUser().getUsername());
             viewHolder.mTvSneakMessage.setText(messageGroup.getSneakMessage());
+            viewHolder.mTvTime.setText(messageGroup.getTime());
 
             User user = messageGroup.getUser();
 
@@ -84,7 +95,8 @@ public class MessageGroupAdapter extends BaseAdapter {
 
     class ViewHolder {
         int position;
-        TextView mTvUsername, mTvSneakMessage;
+        RelativeLayout mParent;
+        TextView mTvUsername, mTvSneakMessage, mTvTime;
         ImageView mIvThumb;
     }
 }

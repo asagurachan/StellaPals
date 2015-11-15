@@ -15,6 +15,7 @@ package com.stella.pals.custom;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -190,7 +191,7 @@ public class SwipeRefreshLayoutBottom extends ViewGroup {
      * The refresh indicator starting and resting position is always positioned
      * near the top of the refreshing content. This position is a consistent
      * location, but can be adjusted in either direction based on whether or not
-     * there is a toolbar or actionbar present.
+     * there is a mToolbar or actionbar present.
      *
      * @param scale Set to true if there is no view at a higher z-order than
      *            where the progress spinner is set to appear.
@@ -214,7 +215,7 @@ public class SwipeRefreshLayoutBottom extends ViewGroup {
      * The refresh indicator resting position is always positioned near the top
      * of the refreshing content. This position is a consistent location, but
      * can be adjusted in either direction based on whether or not there is a
-     * toolbar or actionbar present.
+     * mToolbar or actionbar present.
      *
      * @param scale Set to true if there is no view at a higher z-order than
      *            where the progress spinner is set to appear.
@@ -754,6 +755,7 @@ public class SwipeRefreshLayoutBottom extends ViewGroup {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+
         final int action = MotionEventCompat.getActionMasked(ev);
 
         if (mReturningToStart && action == MotionEvent.ACTION_DOWN) {
