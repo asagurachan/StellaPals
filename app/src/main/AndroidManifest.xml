@@ -31,10 +31,11 @@
         </activity>
         <activity
             android:name=".frontend.register.RegisterActivity"
-            android:label="@string/title_activity_register" >
-        </activity>
-        <activity android:name=".frontend.thread.ThreadActivity" >
-        </activity>
+            android:label="@string/title_activity_register" />
+        <activity android:name=".frontend.thread.ThreadActivity" />
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="e109d2fc2272b96de4a6a8cf0fc9aeb05c84f439" />
     </application>
 
 </manifest>

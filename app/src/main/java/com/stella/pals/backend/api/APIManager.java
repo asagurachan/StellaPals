@@ -90,7 +90,7 @@ public abstract class APIManager extends AsyncTask<Integer, Integer, Integer> im
 
     private void getCookies(Connection.Response responseSoup) {
         Map<String, String> cookies = responseSoup.cookies();
-        if (!cookies.isEmpty()) {
+        if (!cookies.isEmpty() && cookies.containsKey("interpals_sessid")) {
             Global.setCookies(cookies);
             Global.initCookiesFromPreferences();
         }

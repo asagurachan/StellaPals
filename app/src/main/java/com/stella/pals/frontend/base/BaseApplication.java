@@ -3,6 +3,10 @@ package com.stella.pals.frontend.base;
 import android.app.Application;
 import android.content.Context;
 
+import com.crashlytics.android.Crashlytics;
+
+import io.fabric.sdk.android.Fabric;
+
 /**
  * Created by DJ on 11/11/15.
  * Project: Stella Pals
@@ -20,6 +24,7 @@ public class BaseApplication extends Application {
         mContext = getApplicationContext();
 
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
     }
 
 }

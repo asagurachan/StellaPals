@@ -50,7 +50,6 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onRefresh() {
                 Log.d(TAG, "Refreshing");
-
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });

@@ -77,3 +77,9 @@
 
 # Keep all the ACRA classes
 -keep class org.acra.** { *; }
+
+# Remove logging
+-assumenosideeffects class android.util.Log {
+    public static *** d(...);
+    public static *** v(...);
+}
