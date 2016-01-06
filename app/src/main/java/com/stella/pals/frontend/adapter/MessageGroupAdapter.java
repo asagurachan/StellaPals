@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.stella.pals.R;
 import com.stella.pals.backend.model.MessageGroup;
 import com.stella.pals.backend.model.User;
-import com.stella.pals.frontend.base.BaseApplication;
 import com.stella.pals.frontend.global.Global;
 import com.stella.pals.utils.ImageUtil;
 
@@ -67,7 +66,7 @@ public class MessageGroupAdapter extends BaseAdapter {
         if (viewHolder.position != position) {
             MessageGroup messageGroup = (MessageGroup) getItem(position);
 
-            if (messageGroup.isNew()) {
+            if (messageGroup.getNewMessage()) {
                 viewHolder.mParent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.primary));
             } else {
                 viewHolder.mParent.setBackgroundColor(ContextCompat.getColor(mContext, android.R.color.transparent));
@@ -80,10 +79,10 @@ public class MessageGroupAdapter extends BaseAdapter {
             User user = messageGroup.getUser();
 
             if (user.getSex() == User.FEMALE) {
-                viewHolder.mTvUsername.setTextColor(ContextCompat.getColor(BaseApplication.getAppContext(), R.color.purple));
+                viewHolder.mTvUsername.setTextColor(ContextCompat.getColor(mContext, R.color.purple));
                 Global.IMAGE_LOADER.displayImage(messageGroup.getUser().getThumb(), viewHolder.mIvThumb, ImageUtil.displayFemalePhotoOptions);
             } else if (user.getSex() == User.MALE) {
-                viewHolder.mTvUsername.setTextColor(ContextCompat.getColor(BaseApplication.getAppContext(), R.color.blue));
+                viewHolder.mTvUsername.setTextColor(ContextCompat.getColor(mContext, R.color.blue));
                 Global.IMAGE_LOADER.displayImage(user.getThumb(), viewHolder.mIvThumb, ImageUtil.displayMalePhotoOptions);
             }
 

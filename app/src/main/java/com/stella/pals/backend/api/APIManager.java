@@ -136,9 +136,9 @@ public abstract class APIManager extends AsyncTask<Integer, Integer, Integer> im
             if (mDocumentSoup != null && !mDocumentSoup.location().contains(APIConstants.LOGIN)) {
                 onPostTask();
             } else if (!mUrl.equals(APIConstants.LOGIN)) {
-                Intent intent = new Intent(BaseApplication.getAppContext(), LoginActivity.class);
+                Intent intent = new Intent(BaseApplication.getInstance(), LoginActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                BaseApplication.getAppContext().startActivity(intent);
+                BaseApplication.getInstance().startActivity(intent);
             }
         } else if (responseCode != NO_CONNECTION) {
             onPostFailTask();

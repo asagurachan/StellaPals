@@ -18,10 +18,24 @@ import com.stella.pals.frontend.base.BaseActivity;
 import com.stella.pals.frontend.global.Global;
 import com.stella.pals.frontend.thread.ThreadActivity;
 
+import de.greenrobot.event.EventBus;
+
 public class MainActivity extends BaseActivity {
 
     private ListView mLvMessageGroups;
     private MessageGroupAdapter mAdapter;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +77,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 if (firstVisibleItem + visibleItemCount == totalItemCount) {
-                    Global.updateMessageGroups(Global.lastPage, mAdapter);
+//                    Global.updateMessageGroups(Global.lastPage, mAdapter);
                 }
             }
         });
@@ -97,5 +111,11 @@ public class MainActivity extends BaseActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onEvent(Boolean success) {
+        if (success) {
+            mAdapter.notifyDataSetChanged();
+        }
     }
 }

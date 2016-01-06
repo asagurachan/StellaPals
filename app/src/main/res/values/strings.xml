@@ -8,6 +8,8 @@
     <string name="em_unable_to_get_action_bar">Unable to get toolbar</string>
     <string name="em_no_internet_connection">No internet connection</string>
     <string name="em_invalid_username_or_password">Invalid username or password</string>
+    <string name="em_invalid_username_or_email">Invalid username or email</string>
+    <string name="em_please_enter_your_username_or_email">Please enter your username or email</string>
     <string name="em_please_enter_a_username">Please enter a username</string>
     <string name="em_username_has_been_taken">Username has already been taken</string>
     <string name="em_please_enter_a_email">Please enter a email</string>

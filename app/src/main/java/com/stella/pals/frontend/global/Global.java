@@ -37,8 +37,11 @@ public class Global {
     public static ArrayList<MessageGroup> messageGroups = new ArrayList<MessageGroup>();
     public static int lastPage= 1;
     public static String username;
-    private static boolean updatingMessageGroups = false;
+    public static boolean updatingMessageGroups = false;
     public static boolean randomTest = false;
+
+    // Job Priority
+    public static final int JOB_PRORITY_1 = 1;
 
     public static void init(Context context) {
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).build();
@@ -90,7 +93,7 @@ public class Global {
     public static void updateMessageGroups(int page, final BaseAdapter adapter) {
         if (!updatingMessageGroups) {
             updatingMessageGroups = true;
-            new APIManager(BaseApplication.getAppContext(), APIConstants.PM, APIParams.messageGroup(page), true) {
+            new APIManager(BaseApplication.getInstance(), APIConstants.PM, APIParams.messageGroup(page), true) {
                 @Override
                 public void onPostTask() {
                     Elements threads = mDocumentSoup.getElementById("threads_left").children();
@@ -113,7 +116,7 @@ public class Global {
                             if (!ageStr.trim().isEmpty()) {
                                 age = Integer.parseInt(ageStr.replace(", ", ""));
                             }
-                            byte sex = currentThread.getElementsByClass("th_user_thumb").get(0).child(0).hasClass("female") ? User.FEMALE : User.MALE;
+                            int sex = currentThread.getElementsByClass("th_user_thumb").get(0).child(0).hasClass("female") ? User.FEMALE : User.MALE;
                             User user = new User(id, username, thumb, age, sex);
                             boolean newMessage = currentThread.hasClass("new");
 
