@@ -90,8 +90,8 @@ public class RegisterActivityTest {
     }
 
     /*
-   * Use this method to find the EditText within the TextInputLayout. Useful for typing into the TextInputLayout
-   */
+       * Use this method to find the EditText within the TextInputLayout. Useful for typing into the TextInputLayout
+       */
     public static ViewInteraction onEditTextWithinTilWithId(@IdRes int textInputLayoutId) {
         //Note, if you have specified an ID for the EditText that you place inside
         //the TextInputLayout, use that instead - i.e, onView(withId(R.id.my_edit_text));

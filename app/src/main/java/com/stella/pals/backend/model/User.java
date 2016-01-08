@@ -1,6 +1,5 @@
 package com.stella.pals.backend.model;
 
-import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
@@ -10,24 +9,18 @@ import com.stella.pals.backend.PalsDatabase;
  * Created by DJ on 3/11/15.
  * Project: Stella Pals
  */
-@Table(databaseName = PalsDatabase.NAME)
+@Table(database = PalsDatabase.class, allFields = true)
 public class User extends BaseModel {
 
     public static final int MALE = 1;
     public static final int FEMALE = 2;
 
-    @Column
     @PrimaryKey
     private String id;
-    @Column
     private String username;
-    @Column
     private String name;
-    @Column
     private String thumb;
-    @Column
     private int age;
-    @Column
     private int sex;
 
     public User() {}

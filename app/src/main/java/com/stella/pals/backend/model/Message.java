@@ -1,13 +1,20 @@
 package com.stella.pals.backend.model;
 
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+import com.stella.pals.backend.PalsDatabase;
+
 import java.util.Date;
 
 /**
  * Created by DJ on 13/11/15.
  * Project: Stella Pals
  */
+@Table(database = PalsDatabase.class, allFields = true)
 public class Message {
 
+    @PrimaryKey(autoincrement = true)
+    private int id;
     private String mMessage;
     private String mProfile;
     private String mTime;

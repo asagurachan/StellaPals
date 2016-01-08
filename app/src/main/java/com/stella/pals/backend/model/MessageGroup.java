@@ -1,11 +1,11 @@
 package com.stella.pals.backend.model;
 
-import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ForeignKey;
-import com.raizlabs.android.dbflow.annotation.ForeignKeyReference;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.structure.BaseModel;
+import com.raizlabs.android.dbflow.structure.container.ForeignKeyContainer;
 import com.stella.pals.backend.PalsDatabase;
 
 import java.util.Date;
@@ -14,34 +14,22 @@ import java.util.Date;
  * Created by DJ on 3/11/15.
  * Project: Stella Pals
  */
-@Table(databaseName = PalsDatabase.NAME)
+@Table(database = PalsDatabase.class, allFields = true)
 public class MessageGroup extends BaseModel {
 
-    @Column
     @PrimaryKey(autoincrement = true)
     private int id;
-    @Column
-    @ForeignKey(
-            references = {@ForeignKeyReference(columnName = "user_id",
-                            columnType = String.class,
-                            foreignColumnName = "id",
-                            fieldIsPrivate = true)},
-            saveForeignKeyModel = false
-    )
-    private User user;
-    @Column
+    @ForeignKey(saveForeignKeyModel = false)
+    private ForeignKeyContainer<User> userForeignKeyContainer;
     private String sneakMessage;
-    @Column
     private String time;
-    @Column
     private Date date;
-    @Column
     private boolean newMessage;
 
     public MessageGroup() {}
 
     public MessageGroup(User user, String sneakMessage, String time, boolean newMessage) {
-        this.user = user;
+        associateUser(user);
         this.sneakMessage = sneakMessage;
         this.time = time;
         this.newMessage = newMessage;
@@ -58,7 +46,7 @@ public class MessageGroup extends BaseModel {
     }
 
     public User getUser() {
-        return user;
+        return userForeignKeyContainer.load();
     }
 
     public String getTime() {
@@ -79,7 +67,7 @@ public class MessageGroup extends BaseModel {
     }
 
     public void setUser(User user) {
-        this.user = user;
+        associateUser(user);
     }
 
     public void setSneakMessage(String sneakMessage) {
@@ -113,5 +101,9 @@ public class MessageGroup extends BaseModel {
             timeLong = current.getTime() - timeLong;
             date = new Date(timeLong);
         }
+    }
+
+    public void associateUser(User user) {
+        userForeignKeyContainer = FlowManager.getContainerAdapter(User.class).toForeignKeyContainer(user);
     }
 }
