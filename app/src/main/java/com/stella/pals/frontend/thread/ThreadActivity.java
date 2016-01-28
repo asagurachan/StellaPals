@@ -84,7 +84,7 @@ public class ThreadActivity extends BaseActivity {
                     mCurPage++;
                     mLoadingMessages = false;
 
-                    Elements conversation = mDocumentSoup.getElementById("conversation").children();
+                    Elements conversation = documentSoup.getElementById("conversation").children();
                     int size = conversation.size();
                     for (int x = size - 1; x >= 0; x--) {
                         Element messageE = conversation.get(x);
@@ -108,7 +108,7 @@ public class ThreadActivity extends BaseActivity {
                             unread = true;
                         }
 
-                        Message message = new Message(fullMessage, thumb, Global.COOKIES.get("last_user").equalsIgnoreCase(username), time, unread);
+                        Message message = new Message(fullMessage, thumb, Global.getUsername().equalsIgnoreCase(username), time, unread);
                         mMessages.add(mMessages.size(), message);
                     }
                     mAdapter.notifyDataSetChanged();

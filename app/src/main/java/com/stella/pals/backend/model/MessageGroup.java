@@ -18,13 +18,13 @@ import java.util.Date;
 public class MessageGroup extends BaseModel {
 
     @PrimaryKey(autoincrement = true)
-    private int id;
+    int id;
     @ForeignKey(saveForeignKeyModel = false)
-    private ForeignKeyContainer<User> userForeignKeyContainer;
-    private String sneakMessage;
-    private String time;
-    private Date date;
-    private boolean newMessage;
+    ForeignKeyContainer<User> userForeignKeyContainer;
+    String sneakMessage;
+    String time;
+    Date date;
+    boolean newMessage;
 
     public MessageGroup() {}
 
@@ -57,7 +57,7 @@ public class MessageGroup extends BaseModel {
         return date;
     }
 
-    public boolean getNewMessage() {
+    public boolean isNewMessage() {
         return newMessage;
     }
 

@@ -4,7 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.stella.pals.R;
+import com.stella.pals.backend.model.Cookie;
+import com.stella.pals.backend.model.Cookie_Table;
 import com.stella.pals.frontend.MainActivity;
 import com.stella.pals.frontend.base.BaseActivity;
 import com.stella.pals.frontend.global.Global;
@@ -17,7 +20,8 @@ public class SplashActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         Global.init(this);
-        if (Global.COOKIES.isEmpty() || !Global.COOKIES.containsKey("last_user")) {
+        Cookie lastUser = SQLite.select().from(Cookie.class).where(Cookie_Table.key.eq("last_user")).querySingle();
+        if (lastUser == null) {
             Intent intent = new Intent(this, LoginActivity.class);
             ActivityCompat.startActivity(this, intent, null);
             ActivityCompat.finishAffinity(this);

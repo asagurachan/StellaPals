@@ -66,7 +66,7 @@ public class MessageGroupAdapter extends BaseAdapter {
         if (viewHolder.position != position) {
             MessageGroup messageGroup = (MessageGroup) getItem(position);
 
-            if (messageGroup.getNewMessage()) {
+            if (messageGroup.isNewMessage()) {
                 viewHolder.mParent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.primary));
             } else {
                 viewHolder.mParent.setBackgroundColor(ContextCompat.getColor(mContext, android.R.color.transparent));

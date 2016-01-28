@@ -18,7 +18,7 @@
         <activity
             android:name=".frontend.login.LoginActivity"
             android:label="@string/title_activity_login"
-            android:windowSoftInputMode="adjustResize" >
+            android:windowSoftInputMode="adjustResize">
         </activity>
         <activity
             android:name=".frontend.splash.SplashActivity"

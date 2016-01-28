@@ -9,6 +9,7 @@
         <item name="android:textColorPrimary">@color/text_primary</item>
         <item name="android:navigationBarColor">@color/navigation_bar</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <item name="android:toolbarStyle">@style/ToolBarStyle</item>
 
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>

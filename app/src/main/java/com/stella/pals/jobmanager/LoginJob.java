@@ -32,18 +32,19 @@ public class LoginJob extends Job {
     @Override
     public void onRun() throws Throwable {
         new APIManager(getApplicationContext(), APIConstants.LOGIN,
-                APIParams.login(username, password)) {
+                APIParams.login(username, password), true) {
             @Override
             public void onPostTask() {
-                EventBus.getDefault().post(mDocumentSoup);
+                EventBus.getDefault().post(documentSoup);
+                super.onPostTask();
             }
 
             @Override
             public void onPostFailTask() {
                 EventBus.getDefault().post(false);
+                super.onPostFailTask();
             }
-        }.setShowOverlay(true)
-                .execute();
+        }.execute();
     }
 
     @Override

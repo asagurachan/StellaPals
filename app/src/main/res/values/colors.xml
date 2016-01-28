@@ -5,7 +5,7 @@
     <color name="primary">#ffeb3b</color>
     <color name="primary_dark">#c9b72e</color>
     <color name="accent">#6892ff</color>
-    <color name="text_primary">#000</color>
+    <color name="text_primary">#000000</color>
     <color name="navigation_bar">#000</color>
     <color name="window_background">#fff</color>
     <color name="drawer_background">#fff</color>

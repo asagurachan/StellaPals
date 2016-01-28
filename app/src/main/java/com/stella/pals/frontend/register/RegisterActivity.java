@@ -2,11 +2,10 @@ package com.stella.pals.frontend.register;
 
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 
@@ -33,13 +32,18 @@ public class RegisterActivity extends BaseActivity {
 
     @Override
     protected void initVariables() {
-//        etUsername = (MaterialEditText) findViewById(R.id.et_username);
-//        etEmail = (MaterialEditText) findViewById(R.id.et_email);
-//        etPassword = (MaterialEditText) findViewById(R.id.et_password);
         rbMale = (RadioButton) findViewById(R.id.rb_male);
         rbFemale = (RadioButton) findViewById(R.id.rb_female);
         sCountry = (Spinner) findViewById(R.id.s_country);
         btnRegister = (Button) findViewById(R.id.btn_register);
+    }
+
+    @Override
+    protected void initLayout(Bundle savedInstanceState) {
+        super.initLayout(savedInstanceState);
+        ArrayAdapter<String> countryArray= new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.country_array));
+        countryArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sCountry.setAdapter(countryArray);
     }
 
     @Override
@@ -61,7 +65,7 @@ public class RegisterActivity extends BaseActivity {
 //                                    "", "", "", "")) {
 //                        @Override
 //                        public void onPostTask() {
-//                            Elements elements = mDocumentSoup.getElementsByClass("suErr");
+//                            Elements elements = documentSoup.getElementsByClass("suErr");
 //
 //                            for (Element ele : elements) {
 //                                if (!ele.getElementsByAttributeValue("name", "username").isEmpty()) {
@@ -139,7 +143,7 @@ public class RegisterActivity extends BaseActivity {
 //                        public void onPostFailTask() {
 //
 //                        }
-//                    }.setShowOverlay(true)
+//                    }.setShowDialog(true)
 //                            .execute();
 //                } else {
 //
@@ -148,43 +152,26 @@ public class RegisterActivity extends BaseActivity {
 //        });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_register, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     private boolean checkFields() {
         boolean fieldCheck = true;
         final TextInputLayout tilUsername = (TextInputLayout) findViewById(R.id.til_username);
         final TextInputLayout tilEmail = (TextInputLayout) findViewById(R.id.til_email);
         final TextInputLayout tilPassword = (TextInputLayout) findViewById(R.id.til_password);
+        EditText etUsername = tilUsername.getEditText();
+        EditText etEmail = tilEmail.getEditText();
+        EditText etPassword = tilPassword.getEditText();
         String username = "";
         String email = "";
         String password = "";
 
-        try {
-            username = tilUsername.getEditText().getText().toString();
-            email = tilEmail.getEditText().getText().toString();
-            password = tilPassword.getEditText().getText().toString();
-        } catch (NullPointerException e) {
-            Log.e(TAG, e.getMessage(), e);
+        if (etUsername != null) {
+            username = etUsername.toString();
+        }
+        if (etEmail != null) {
+            email = etEmail.toString();
+        }
+        if (etPassword != null) {
+            password = etPassword.toString();
         }
 
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {

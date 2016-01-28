@@ -1,12 +1,13 @@
 package com.stella.pals.frontend.base;
 
+import android.app.ProgressDialog;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 
 import com.stella.pals.R;
@@ -14,10 +15,12 @@ import com.stella.pals.R;
 /**
  * Created by DJ on 13/8/15.
  */
+@SuppressWarnings({"UnusedParameters", "EmptyMethod"})
 public abstract class BaseActivity extends AppCompatActivity {
 
     public static final String TAG = BaseActivity.class.getSimpleName();
     protected Toolbar mToolbar;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -28,17 +31,23 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);
 
-            try {
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                getSupportActionBar().setDisplayShowHomeEnabled(true);
-            } catch (NullPointerException e) {
-                Log.i(TAG, getString(R.string.em_unable_to_get_action_bar));
+            ActionBar actionBar = getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setDisplayHomeAsUpEnabled(true);
+                actionBar.setDisplayShowHomeEnabled(true);
             }
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                 mToolbar.setTitleTextColor(getResources().getColor(R.color.black));
             } else {
                 mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.black));
             }
+
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -71,6 +80,30 @@ public abstract class BaseActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 onBackPressed();
+            }
+        });
+    }
+
+    protected void showDialog() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressDialog = new ProgressDialog(BaseActivity.this);
+                progressDialog.setIndeterminate(true);
+                progressDialog.setMessage(getString(R.string.d_loading));
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+            }
+        });
+    }
+
+    protected void dismissDialog() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
             }
         });
     }

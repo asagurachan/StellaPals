@@ -44,7 +44,7 @@ public class MessageGroupsJob extends Job {
             new APIManager(BaseApplication.getInstance(), APIConstants.PM, APIParams.messageGroup(page), true) {
                 @Override
                 public void onPostTask() {
-                    Elements threads = mDocumentSoup.getElementById("threads_left").children();
+                    Elements threads = documentSoup.getElementById("threads_left").children();
                     int size = threads.size();
                     for (int x = 0; x < size; x++) {
                         try {

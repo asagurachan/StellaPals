@@ -11,7 +11,8 @@
         android:layout_height="35dp"
         android:layout_margin="5dp"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
+        android:layout_alignParentEnd="true"
+        android:contentDescription="@string/cd_profile_picture"/>
 
     <TextView
         android:id="@+id/tv_time"

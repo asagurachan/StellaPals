@@ -8,6 +8,7 @@ public class APIConstants {
 
     public static final String LOGIN = "login.php";
     public static final String SIGNUP = "async/signup.php";
+    public static final String ACCOUNT = "account.php";
     public static final String PM = "pm.php";
 
 }

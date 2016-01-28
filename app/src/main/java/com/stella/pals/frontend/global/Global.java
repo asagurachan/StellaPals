@@ -7,9 +7,12 @@ import android.widget.BaseAdapter;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.stella.pals.backend.api.APIConstants;
 import com.stella.pals.backend.api.APIManager;
 import com.stella.pals.backend.api.APIParams;
+import com.stella.pals.backend.model.Cookie;
+import com.stella.pals.backend.model.Cookie_Table;
 import com.stella.pals.backend.model.MessageGroup;
 import com.stella.pals.backend.model.User;
 import com.stella.pals.frontend.base.BaseApplication;
@@ -20,7 +23,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -33,10 +35,9 @@ public class Global {
 
     public static final boolean PRODUCTION = false;
     public static ImageLoader IMAGE_LOADER;
-    public static Map<String, String> COOKIES;
     public static ArrayList<MessageGroup> messageGroups = new ArrayList<MessageGroup>();
-    public static int lastPage= 1;
-    public static String username;
+    public static int lastPage = 1;
+    private static String username = "";
     public static boolean updatingMessageGroups = false;
     public static boolean randomTest = false;
 
@@ -48,46 +49,21 @@ public class Global {
         ImageLoader.getInstance().init(config);
         IMAGE_LOADER = ImageLoader.getInstance();
         SharedPreferencesUtil.init(context);
-        initCookiesFromPreferences();
+    }
+
+    public static String getUsername() {
+        if (StringUtil.isEmpty(username)) {
+            Cookie lastUser = SQLite.select().from(Cookie.class).where(Cookie_Table.key.eq("last_user")).querySingle();
+            username = lastUser.getValue();
+        }
+
+        return username;
     }
 
     public static void setCookies(Map<String, String> cookies) {
-        COOKIES = cookies;
-        SharedPreferencesUtil.putString("cookies", cookiesToString());
-    }
-
-    public static void initCookiesFromPreferences() {
-        COOKIES = cookiesStringToMap();
-    }
-
-    private static String cookiesToString() {
-        StringBuilder cookiesString = new StringBuilder();
-        for (Map.Entry entry : COOKIES.entrySet()) {
-            cookiesString.append(entry.getKey());
-            cookiesString.append(":");
-            cookiesString.append(entry.getValue());
-            cookiesString.append(";");
+        for (Map.Entry entry : cookies.entrySet()) {
+            new Cookie(entry);
         }
-
-        return cookiesString.toString();
-    }
-
-    private static Map<String, String> cookiesStringToMap() {
-        HashMap<String, String> cookies = new HashMap<String, String>();
-
-        String cookiesString = SharedPreferencesUtil.getString("cookies");
-        if (StringUtil.isNotEmpty(cookiesString)) {
-            String[] cookiesSplit = cookiesString.split(";");
-
-            for (String cur : cookiesSplit) {
-                if (StringUtil.isNotEmpty(cur)) {
-                    String[] keyValue = cur.split(":");
-                    cookies.put(keyValue[0], keyValue[1]);
-                }
-            }
-        }
-
-        return cookies;
     }
 
     public static void updateMessageGroups(int page, final BaseAdapter adapter) {
@@ -96,7 +72,7 @@ public class Global {
             new APIManager(BaseApplication.getInstance(), APIConstants.PM, APIParams.messageGroup(page), true) {
                 @Override
                 public void onPostTask() {
-                    Elements threads = mDocumentSoup.getElementById("threads_left").children();
+                    Elements threads = documentSoup.getElementById("threads_left").children();
                     int size = threads.size();
                     for (int x = 0; x < size; x++) {
                         try {

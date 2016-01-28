@@ -75,9 +75,6 @@
 # "project.properties" file to get the path to the default "proguard-android-optimize.txt".
 -keepattributes *Annotation*
 
-# Keep all the ACRA classes
--keep class org.acra.** { *; }
-
 # Remove logging
 -assumenosideeffects class android.util.Log {
     public static *** d(...);

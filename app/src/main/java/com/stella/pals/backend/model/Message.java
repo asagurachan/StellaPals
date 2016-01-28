@@ -2,6 +2,7 @@ package com.stella.pals.backend.model;
 
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.stella.pals.backend.PalsDatabase;
 
 import java.util.Date;
@@ -11,42 +12,80 @@ import java.util.Date;
  * Project: Stella Pals
  */
 @Table(database = PalsDatabase.class, allFields = true)
-public class Message {
+public class Message extends BaseModel {
 
     @PrimaryKey(autoincrement = true)
-    private int id;
-    private String mMessage;
-    private String mProfile;
-    private String mTime;
-    private boolean mOwnMessage;
-    private boolean mUnread;
-    private Date mPostDate;
+    int id;
+    String message;
+    String profile;
+    String time;
+    boolean ownMessage;
+    boolean unread;
+    Date postDate;
+
+    public Message() {}
 
     public Message(String message, String profile, boolean ownMessage, String time, boolean unread) {
-        mMessage = message;
-        mProfile = profile;
-        mOwnMessage = ownMessage;
-        mTime = time;
-        mUnread = unread;
+        this.message = message;
+        this.profile = profile;
+        this.ownMessage = ownMessage;
+        this.time = time;
+        this.unread = unread;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getMessage() {
-        return mMessage;
+        return message;
     }
 
     public String getProfile() {
-        return mProfile;
+        return profile;
+    }
+
+    public Date getPostDate() {
+        return postDate;
     }
 
     public boolean isOwnMessage() {
-        return mOwnMessage;
+        return ownMessage;
     }
 
     public String getTime() {
-        return mTime;
+        return time;
     }
 
     public boolean isUnread() {
-        return mUnread;
+        return unread;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setProfile(String profile) {
+        this.profile = profile;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public void setOwnMessage(boolean ownMessage) {
+        this.ownMessage = ownMessage;
+    }
+
+    public void setUnread(boolean unread) {
+        this.unread = unread;
+    }
+
+    public void setPostDate(Date postDate) {
+        this.postDate = postDate;
     }
 }
