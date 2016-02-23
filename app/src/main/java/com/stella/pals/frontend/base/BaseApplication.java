@@ -4,23 +4,38 @@ import android.app.Application;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.franmontiel.persistentcookiejar.ClearableCookieJar;
+import com.franmontiel.persistentcookiejar.PersistentCookieJar;
+import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
+import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 import com.path.android.jobqueue.JobManager;
 import com.path.android.jobqueue.config.Configuration;
 import com.path.android.jobqueue.log.CustomLogger;
-import com.raizlabs.android.dbflow.config.FlowManager;
+import com.squareup.leakcanary.LeakCanary;
+import com.stella.pals.backend.api.ApiService;
 import com.stella.pals.frontend.global.Global;
 
+import org.androidannotations.annotations.EApplication;
+
 import io.fabric.sdk.android.Fabric;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
 
 /**
  * Created by DJ on 11/11/15.
  * Project: Stella Pals
  */
+@EApplication
 public class BaseApplication extends Application {
 
     private static BaseApplication instance;
     private JobManager localJobManager;
     private JobManager networkJobManager;
+    private ApiService apiService;
+    private ClearableCookieJar cookieJar;
 
     public static BaseApplication getInstance() {
         return instance;
@@ -31,8 +46,10 @@ public class BaseApplication extends Application {
         super.onCreate();
         instance = this;
         Fabric.with(this, new Crashlytics());
-        FlowManager.init(this);
+        LeakCanary.install(this);
         configureJobManagers();
+        configureApiService();
+        configureRealm();
     }
 
     private void configureJobManagers() {
@@ -68,11 +85,56 @@ public class BaseApplication extends Application {
         networkJobManager = new JobManager(this, configuration.id("network").build());
     }
 
+    private void configureCookieJar() {
+        cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(this));
+    }
+
+    private void configureApiService() {
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.NONE);
+        configureCookieJar();
+        OkHttpClient client = new OkHttpClient.Builder().cookieJar(cookieJar).addInterceptor(logging).build();
+
+        apiService = new Retrofit.Builder()
+                .baseUrl("https://www.interpals.net/")
+                .client(client)
+                .build().create(ApiService.class);
+    }
+
+    private void configureRealm() {
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(this).build();
+//        Realm.deleteRealm(realmConfig);
+        // Set the default Realm configuration at the beginning.
+        Realm.setDefaultConfiguration(realmConfig);
+    }
+
     public JobManager getLocalJobManager() {
+        if (localJobManager == null) {
+            configureJobManagers();
+        }
         return localJobManager;
     }
 
     public JobManager getNetworkJobManager() {
+        if (networkJobManager == null) {
+            configureJobManagers();
+        }
+
         return networkJobManager;
+    }
+
+    public ApiService getApiService() {
+        if (apiService == null) {
+            configureCookieJar();
+            configureApiService();
+        }
+
+        return apiService;
+    }
+
+    public void clearCookies() {
+        configureCookieJar();
+        cookieJar.clear();
+        configureApiService();
     }
 }

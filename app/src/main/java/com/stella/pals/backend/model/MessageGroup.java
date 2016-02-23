@@ -1,43 +1,41 @@
 package com.stella.pals.backend.model;
 
-import com.raizlabs.android.dbflow.annotation.ForeignKey;
-import com.raizlabs.android.dbflow.annotation.PrimaryKey;
-import com.raizlabs.android.dbflow.annotation.Table;
-import com.raizlabs.android.dbflow.config.FlowManager;
-import com.raizlabs.android.dbflow.structure.BaseModel;
-import com.raizlabs.android.dbflow.structure.container.ForeignKeyContainer;
-import com.stella.pals.backend.PalsDatabase;
+import com.stella.pals.utils.DateTimeUtil;
 
 import java.util.Date;
+
+import io.realm.RealmObject;
+import io.realm.annotations.Index;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by DJ on 3/11/15.
  * Project: Stella Pals
  */
-@Table(database = PalsDatabase.class, allFields = true)
-public class MessageGroup extends BaseModel {
+public class MessageGroup extends RealmObject {
 
-    @PrimaryKey(autoincrement = true)
-    int id;
-    @ForeignKey(saveForeignKeyModel = false)
-    ForeignKeyContainer<User> userForeignKeyContainer;
-    String sneakMessage;
-    String time;
-    Date date;
-    boolean newMessage;
+    @PrimaryKey
+    private String id;
+    private User user;
+    private String sneakMessage;
+    private String time;
+    @Index
+    private Date date;
+    private boolean newMessage;
 
     public MessageGroup() {}
 
     public MessageGroup(User user, String sneakMessage, String time, boolean newMessage) {
-        associateUser(user);
+        this.id = user.getId();
+        this.user = user;
         this.sneakMessage = sneakMessage;
         this.time = time;
         this.newMessage = newMessage;
-        convertTimeToDate(time);
+        this.date = DateTimeUtil.convertTimeToDate(time);
     }
 
     // Getters
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -46,7 +44,7 @@ public class MessageGroup extends BaseModel {
     }
 
     public User getUser() {
-        return userForeignKeyContainer.load();
+        return user;
     }
 
     public String getTime() {
@@ -62,12 +60,12 @@ public class MessageGroup extends BaseModel {
     }
 
     // Setters
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
     public void setUser(User user) {
-        associateUser(user);
+        this.user = user;
     }
 
     public void setSneakMessage(String sneakMessage) {
@@ -76,6 +74,7 @@ public class MessageGroup extends BaseModel {
 
     public void setTime(String time) {
         this.time = time;
+        this.date = DateTimeUtil.convertTimeToDate(time);
     }
 
     public void setDate(Date date) {
@@ -86,24 +85,4 @@ public class MessageGroup extends BaseModel {
         this.newMessage = newMessage;
     }
 
-    private void convertTimeToDate(String time) {
-        Date current = new Date();
-        if (time.contains("hours")) {
-            int startH = time.indexOf("h");
-            int hours = Integer.valueOf(time.substring(0, startH));
-            long timeLong = 3600000 * hours;
-            timeLong = current.getTime() - timeLong;
-            date = new Date(timeLong);
-        } else if (time.contains("days")) {
-            int startH = time.indexOf("d");
-            int days = Integer.valueOf(time.substring(0, startH));
-            long timeLong = 86400000 * days;
-            timeLong = current.getTime() - timeLong;
-            date = new Date(timeLong);
-        }
-    }
-
-    public void associateUser(User user) {
-        userForeignKeyContainer = FlowManager.getContainerAdapter(User.class).toForeignKeyContainer(user);
-    }
 }

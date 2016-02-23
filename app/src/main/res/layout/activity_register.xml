@@ -74,6 +74,7 @@
                     android:text="@string/h_sex"/>
 
                 <RadioGroup
+                    android:id="@+id/rg_sex"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/mp_10"

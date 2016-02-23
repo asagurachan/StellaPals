@@ -1,162 +1,87 @@
 package com.stella.pals.frontend.register;
 
-import android.os.Bundle;
+import android.content.Context;
 import android.support.design.widget.TextInputLayout;
-import android.view.View;
+import android.telephony.TelephonyManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 import com.stella.pals.R;
 import com.stella.pals.frontend.base.BaseActivity;
 import com.stella.pals.utils.StringUtil;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
+
+import java.util.Arrays;
+
+@EActivity(R.layout.activity_register)
 public class RegisterActivity extends BaseActivity {
 
-    private RadioButton rbMale;
-    private RadioButton rbFemale;
-    private Spinner sCountry;
-    private Button btnRegister;
+    @ViewById(R.id.til_username)
+    TextInputLayout tilUsername;
+    @ViewById(R.id.til_email)
+    TextInputLayout tilEmail;
+    @ViewById(R.id.til_password)
+    TextInputLayout tilPassword;
+    @ViewById(R.id.rg_sex)
+    RadioGroup rgSex;
+    @ViewById(R.id.rb_male)
+    RadioButton rbMale;
+    @ViewById(R.id.rb_female)
+    RadioButton rbFemale;
+    @ViewById(R.id.s_country)
+    Spinner sCountry;
+    @ViewById(R.id.btn_register)
+    Button btnRegister;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    protected int getLayoutResource() {
-        return R.layout.activity_register;
-    }
-
-    @Override
-    protected void initVariables() {
-        rbMale = (RadioButton) findViewById(R.id.rb_male);
-        rbFemale = (RadioButton) findViewById(R.id.rb_female);
-        sCountry = (Spinner) findViewById(R.id.s_country);
-        btnRegister = (Button) findViewById(R.id.btn_register);
-    }
-
-    @Override
-    protected void initLayout(Bundle savedInstanceState) {
-        super.initLayout(savedInstanceState);
-        ArrayAdapter<String> countryArray= new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.country_array));
+    @AfterViews
+    protected void initCountrySpinner() {
+        ArrayAdapter<String> countryArray = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.country_array));
         countryArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sCountry.setAdapter(countryArray);
+
+        TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+        String countryIso = telephonyManager.getSimCountryIso().toUpperCase();
+
+        if (StringUtil.isEmpty(countryIso)) {
+            switch (telephonyManager.getPhoneType()) {
+                case TelephonyManager.PHONE_TYPE_GSM:
+                case TelephonyManager.PHONE_TYPE_SIP:
+                    countryIso = telephonyManager.getNetworkCountryIso();
+                    break;
+            }
+        }
+
+        if (StringUtil.isNotEmpty(countryIso)) {
+            String[] countryCodeArray = getResources().getStringArray(R.array.country_code_array);
+            int position = Arrays.asList(countryCodeArray).indexOf(countryIso);
+            if (position != -1) {
+                sCountry.setSelection(position);
+            }
+        }
     }
 
-    @Override
-    protected void initListeners() {
-        btnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkFields();
-            }
-        });
-//        btnRegister.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (checkFields()) {
-//                    new APIManager(RegisterActivity.this, APIConstants.SIGNUP,
-//                            APIParams.signup(etUsername.getText().toString(),
-//                                    etEmail.getText().toString(),
-//                                    etPassword.getText().toString(),
-//                                    "", "", "", "")) {
-//                        @Override
-//                        public void onPostTask() {
-//                            Elements elements = documentSoup.getElementsByClass("suErr");
-//
-//                            for (Element ele : elements) {
-//                                if (!ele.getElementsByAttributeValue("name", "username").isEmpty()) {
-//                                    etUsername.setError(getString(R.string.em_username_has_been_taken));
-//                                }
-//
-//                                if (!ele.getElementsByAttributeValue("name", "email").isEmpty()) {
-//                                    etEmail.setError(getString(R.string.em_email_has_been_used_before));
-//                                }
-//
-//                                if (!ele.getElementsByAttributeValue("name", "password").isEmpty()) {
-//                                    etPassword.setError(getString(R.string.em_invalid_password));
-//                                }
-//
-//                                // Birthday
-//                                if (!ele.getElementsByAttributeValue("name", "day").isEmpty()) {
-////                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-////                                        etPassword.setTextColor(getResources().getColor(
-////                                                R.color.red, null));
-////                                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-////                                        etPassword.setTextColor(getResources().getColor(
-////                                                R.color.red));
-////                                    }
-//                                } else {
-////                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-////                                        etPassword.setTextColor(getResources().getColor(
-////                                                R.color.text_primary, null));
-////                                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-////                                        etPassword.setTextColor(getResources().getColor(
-////                                                R.color.text_primary));
-////                                    }
-//                                }
-//
-//                                // Sex
-//                                if (!ele.getElementsByAttributeValue("name", "sex").isEmpty()) {
-////                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-////                                        etPassword.setTextColor(getResources().getColor(
-////                                                R.color.red, null));
-////                                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-////                                        etPassword.setTextColor(getResources().getColor(
-////                                                R.color.red));
-////                                    }
-//                                } else {
-////                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-////                                        etPassword.setTextColor(getResources().getColor(
-////                                                R.color.text_primary, null));
-////                                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-////                                        etPassword.setTextColor(getResources().getColor(
-////                                                R.color.text_primary));
-////                                    }
-//                                }
-//
-//                                // Country
-//                                if (!ele.getElementsByAttributeValue("name", "country").isEmpty()) {
-////                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-////                                        etPassword.setTextColor(getResources().getColor(
-////                                                R.color.red, null));
-////                                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-////                                        etPassword.setTextColor(getResources().getColor(
-////                                                R.color.red));
-////                                    }
-//                                } else {
-////                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-////                                        etPassword.setTextColor(getResources().getColor(
-////                                                R.color.text_primary, null));
-////                                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-////                                        etPassword.setTextColor(getResources().getColor(
-////                                                R.color.text_primary));
-////                                    }
-//                                }
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onPostFailTask() {
-//
-//                        }
-//                    }.setShowDialog(true)
-//                            .execute();
-//                } else {
-//
-//                }
-//            }
-//        });
+    @AfterViews
+    protected void initSex() {
+        rgSex.check(rbMale.getId());
+    }
+
+    @Click(R.id.btn_register)
+    protected void registerOnClick() {
+        if (checkFields()) {
+            // TODO: Implement registration
+        }
     }
 
     private boolean checkFields() {
         boolean fieldCheck = true;
-        final TextInputLayout tilUsername = (TextInputLayout) findViewById(R.id.til_username);
-        final TextInputLayout tilEmail = (TextInputLayout) findViewById(R.id.til_email);
-        final TextInputLayout tilPassword = (TextInputLayout) findViewById(R.id.til_password);
         EditText etUsername = tilUsername.getEditText();
         EditText etEmail = tilEmail.getEditText();
         EditText etPassword = tilPassword.getEditText();
@@ -165,13 +90,13 @@ public class RegisterActivity extends BaseActivity {
         String password = "";
 
         if (etUsername != null) {
-            username = etUsername.toString();
+            username = etUsername.getText().toString();
         }
         if (etEmail != null) {
-            email = etEmail.toString();
+            email = etEmail.getText().toString();
         }
         if (etPassword != null) {
-            password = etPassword.toString();
+            password = etPassword.getText().toString();
         }
 
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {

@@ -1,94 +1,45 @@
 package com.stella.pals.frontend;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
 import com.stella.pals.R;
-import com.stella.pals.frontend.adapter.MessageGroupAdapter;
+import com.stella.pals.frontend.adapter.MainViewPagerAdapter;
 import com.stella.pals.frontend.base.BaseActivity;
-import com.stella.pals.frontend.global.Global;
-import com.stella.pals.frontend.thread.ThreadActivity;
+import com.stella.pals.frontend.base.BaseApplication;
 
-import de.greenrobot.event.EventBus;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.App;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
 
+@EActivity(R.layout.activity_main)
 public class MainActivity extends BaseActivity {
 
-    private ListView mLvMessageGroups;
-    private MessageGroupAdapter mAdapter;
+    @App
+    BaseApplication application;
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
+    @ViewById(R.id.tabs)
+    TabLayout tabLayout;
+    @ViewById(R.id.viewpager)
+    ViewPager viewPager;
+
+    @AfterViews
+    protected void initViewPager() {
+        MainViewPagerAdapter adapter = new MainViewPagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(adapter);
+        initTabLayout();
     }
 
-    @Override
-    protected void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    protected int getLayoutResource() {
-        return R.layout.activity_main;
-    }
-
-    @Override
-    protected void initVariables() {
-        mLvMessageGroups = (ListView) findViewById(R.id.lv_message_groups);
-        mAdapter = new MessageGroupAdapter(this);
-
-        mLvMessageGroups.setAdapter(mAdapter);
-        Global.updateMessageGroups(1, mAdapter);
-    }
-
-    @Override
-    protected void initListeners() {
-        super.initListeners();
-        final SwipeRefreshLayout mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh_layout);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                Log.d(TAG, "Refreshing");
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
-        });
-
-        mLvMessageGroups.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if (firstVisibleItem + visibleItemCount == totalItemCount) {
-//                    Global.updateMessageGroups(Global.lastPage, mAdapter);
-                }
-            }
-        });
-        mLvMessageGroups.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(MainActivity.this, ThreadActivity.class);
-                intent.putExtra("thread_id", Global.messageGroups.get(position).getUser().getId());
-                ActivityCompat.startActivity(MainActivity.this, intent, null);
-            }
-        });
+    protected void initTabLayout() {
+        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.getTabAt(0).setIcon(R.drawable.female_default);
+        tabLayout.getTabAt(1).setIcon(R.drawable.female_default);
+        tabLayout.getTabAt(2).setIcon(R.drawable.female_default);
+        tabLayout.getTabAt(3).setIcon(R.drawable.female_default);
+        tabLayout.getTabAt(4).setIcon(R.drawable.female_default);
     }
 
     @Override
@@ -113,9 +64,18 @@ public class MainActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onEvent(Boolean success) {
-        if (success) {
-            mAdapter.notifyDataSetChanged();
-        }
-    }
+//    @Subscribe
+//    public void onSuccessEvent(SuccessEvent event) {
+//        if (event.code == JobCodes.MESSAGE_GROUP) {
+////            adapter.notifyDataSetChanged();
+//            dismissProgressOverlay();
+//        }
+//    }
+//
+//    @Subscribe
+//    public void onFailedEvent(FailedEvent event) {
+//        if (event.code == JobCodes.MESSAGE_GROUP) {
+//            dismissProgressOverlay();
+//        }
+//    }
 }

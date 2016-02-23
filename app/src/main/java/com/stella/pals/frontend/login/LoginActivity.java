@@ -1,124 +1,110 @@
 package com.stella.pals.frontend.login;
 
-import android.content.Intent;
-import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.ActivityCompat;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.stella.pals.R;
-import com.stella.pals.frontend.MainActivity;
+import com.stella.pals.event.FailedEvent;
+import com.stella.pals.event.IntentEvent;
+import com.stella.pals.event.SuccessEvent;
+import com.stella.pals.frontend.MainActivity_;
 import com.stella.pals.frontend.base.BaseActivity;
 import com.stella.pals.frontend.base.BaseApplication;
-import com.stella.pals.frontend.register.RegisterActivity;
-import com.stella.pals.jobmanager.LoginJob;
+import com.stella.pals.frontend.register.RegisterActivity_;
+import com.stella.pals.interfaces.MyPrefs_;
+import com.stella.pals.job.JobCodes;
+import com.stella.pals.job.LoginJob;
 import com.stella.pals.utils.StringUtil;
 
-import org.jsoup.nodes.Document;
+import org.androidannotations.annotations.AfterInject;
+import org.androidannotations.annotations.App;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.TextChange;
+import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.sharedpreferences.Pref;
+import org.greenrobot.eventbus.Subscribe;
 
-import de.greenrobot.event.EventBus;
-
+@EActivity(R.layout.activity_login)
 public class LoginActivity extends BaseActivity {
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
+    @App
+    BaseApplication application;
+
+    @Pref
+    MyPrefs_ myPrefs;
+
+    @ViewById(R.id.til_username)
+    TextInputLayout tilUsername;
+    @ViewById(R.id.til_password)
+    TextInputLayout tilPassword;
+    @ViewById(R.id.btn_login)
+    Button btnLogin;
+    @ViewById(R.id.btn_register)
+    Button btnRegister;
+
+    @AfterInject
+    public void clearCookies() {
+//        application.clearCookies();
     }
 
-    @Override
-    protected void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    protected int getLayoutResource() {
-        return R.layout.activity_login;
-    }
-
-    @Override
-    protected void initVariables() {
-    }
-
-    @Override
-    protected void initListeners() {
-        final TextInputLayout tilUsername = (TextInputLayout) findViewById(R.id.til_username);
-        final TextInputLayout tilPassword = (TextInputLayout) findViewById(R.id.til_password);
-        EditText etUsername = tilUsername.getEditText();
-        EditText etPassword = tilPassword.getEditText();
-        Button btnLogin = (Button) findViewById(R.id.btn_login);
-        Button btnRegister = (Button) findViewById(R.id.btn_register);
-
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (checkEditTexts(tilUsername, tilPassword)) {
-                    assert tilUsername.getEditText() != null;
-                    String username = tilUsername.getEditText().getText().toString();
-                    assert tilPassword.getEditText() != null;
-                    String password = tilPassword.getEditText().getText().toString();
-
-                    BaseApplication.getInstance().getNetworkJobManager().addJob(new LoginJob(username, password));
-                }
+    @Click(R.id.btn_login)
+    public void loginOnClick() {
+        if (checkEditTexts(tilUsername, tilPassword)) {
+            String username = "";
+            String password = "";
+            if (tilUsername.getEditText() != null) {
+                username = tilUsername.getEditText().getText().toString().trim();
             }
-        });
-        btnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                ActivityCompat.startActivity(LoginActivity.this, intent, null);
+            if (tilPassword.getEditText() != null) {
+                password = tilPassword.getEditText().getText().toString();
             }
-        });
 
-        if (etUsername != null) {
-            etUsername.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if (tilUsername.isErrorEnabled()) {
-                        tilUsername.setErrorEnabled(false);
-                    }
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-
-                }
-            });
+            showProgressOverlay(getString(R.string.pt_logging_in));
+            BaseApplication.getInstance().getNetworkJobManager().addJob(new LoginJob(username, password));
         }
-        if (etPassword != null) {
-            etPassword.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    }
 
-                }
+    @Click(R.id.btn_register)
+    public void registerOnClick() {
+        onIntentEvent(new IntentEvent(RegisterActivity_.intent(this)));
+    }
 
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if (tilPassword.isErrorEnabled()) {
-                        tilPassword.setErrorEnabled(false);
-                    }
-                }
+    @TextChange(R.id.et_username)
+    public void usernameOnTextChange(CharSequence s, int start, int before, int count) {
+        if (tilUsername.isErrorEnabled()) {
+            tilUsername.setErrorEnabled(false);
+        }
+    }
 
-                @Override
-                public void afterTextChanged(Editable s) {
+    @TextChange(R.id.et_password)
+    public void passwordOnTextChange(CharSequence s, int start, int before, int count) {
+        if (tilPassword.isErrorEnabled()) {
+            tilPassword.setErrorEnabled(false);
+        }
+    }
 
-                }
-            });
+    @Subscribe
+    public void onSuccessEvent(SuccessEvent event) {
+        if (event.code == JobCodes.LOGIN) {
+            String username = "";
+            if (tilUsername.getEditText() != null) {
+                username = tilUsername.getEditText().getText().toString().trim();
+            }
+            myPrefs.lastUser().put(username);
+
+            onIntentEvent(new IntentEvent(MainActivity_.intent(this), true));
+            dismissProgressOverlay();
+        }
+    }
+
+    @Subscribe
+    public void onFailedEvent(FailedEvent event) {
+        if (event.code == JobCodes.LOGIN) {
+            tilUsername.setError(getString(R.string.em_invalid_username_or_email));
+            tilPassword.setError(getString(R.string.em_invalid_password));
+            dismissProgressOverlay();
         }
     }
 
@@ -146,26 +132,4 @@ public class LoginActivity extends BaseActivity {
         return noError;
     }
 
-    public void onEvent(Document document) {
-        if (document.getElementById("topLogin") != null) {
-            // Invalid username or password
-            final TextInputLayout tilUsername = (TextInputLayout) findViewById(R.id.til_username);
-            final TextInputLayout tilPassword = (TextInputLayout) findViewById(R.id.til_password);
-            tilUsername.setError(getString(R.string.em_invalid_username_or_email));
-            tilPassword.setError(getString(R.string.em_invalid_password));
-        } else {
-            // Logged in
-            Intent intent = new Intent(this, MainActivity.class);
-            ActivityCompat.startActivity(this, intent, null);
-            ActivityCompat.finishAffinity(this);
-        }
-    }
-
-    public void onEvent(Boolean success) {
-        if (success) {
-            showDialog();
-        } else {
-            dismissDialog();
-        }
-    }
 }

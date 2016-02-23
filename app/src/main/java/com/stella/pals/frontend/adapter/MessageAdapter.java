@@ -11,10 +11,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.stella.pals.R;
 import com.stella.pals.backend.model.Message;
 import com.stella.pals.frontend.global.Global;
-import com.stella.pals.utils.ImageUtil;
 
 import java.util.ArrayList;
 
@@ -104,7 +104,8 @@ public class MessageAdapter extends BaseAdapter {
 
         viewHolder.mTvTime.setText(message.getTime());
         viewHolder.mTvMessage.setText(Html.fromHtml(message.getMessage()));
-        Global.IMAGE_LOADER.displayImage(message.getProfile(), viewHolder.mIvProfile, ImageUtil.displayFemalePhotoOptions);
+//        Global.IMAGE_LOADER.displayImage(message.getProfile(), viewHolder.mIvProfile, ImageUtil.displayFemalePhotoOptions);
+        Glide.with(mContext).load(message.getProfile()).into(viewHolder.mIvProfile);
 
         return convertView;
     }

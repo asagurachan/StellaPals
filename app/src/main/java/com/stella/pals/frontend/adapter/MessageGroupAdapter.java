@@ -2,43 +2,47 @@ package com.stella.pals.frontend.adapter;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.stella.pals.R;
 import com.stella.pals.backend.model.MessageGroup;
 import com.stella.pals.backend.model.User;
-import com.stella.pals.frontend.global.Global;
-import com.stella.pals.utils.ImageUtil;
+import com.stella.pals.frontend.base.BaseApplication_;
+
+import io.realm.RealmBaseAdapter;
+import io.realm.RealmResults;
 
 /**
  * Created by DJ on 11/11/15.
  * Project: Stella Pals
  */
-public class MessageGroupAdapter extends BaseAdapter {
+public class MessageGroupAdapter extends RealmBaseAdapter<MessageGroup> implements ListAdapter {
 
-    private LayoutInflater mLayoutInflater;
-    private Context mContext;
-
-    public MessageGroupAdapter(Context context) {
-        mContext = context;
-        mLayoutInflater = LayoutInflater.from(context);
+    public MessageGroupAdapter(Context context, RealmResults<MessageGroup> realmResults, boolean automaticUpdate) {
+        super(context, realmResults, automaticUpdate);
     }
 
     @Override
     public int getCount() {
-        return Global.messageGroups.size();
+        return realmResults.size();
     }
 
     @Override
-    public Object getItem(int position) {
-        return Global.messageGroups.get(position);
+    public MessageGroup getItem(int position) {
+        return realmResults.get(position);
     }
+
+
 
     @Override
     public long getItemId(int position) {
@@ -50,7 +54,7 @@ public class MessageGroupAdapter extends BaseAdapter {
         ViewHolder viewHolder = new ViewHolder();
 
         if (convertView == null) {
-            convertView = mLayoutInflater.inflate(R.layout.item_message_group, parent, false);
+            convertView = inflater.inflate(R.layout.item_message_group, parent, false);
             viewHolder.mParent = (RelativeLayout) convertView.findViewById(R.id.parent);
             viewHolder.mIvThumb = (ImageView) convertView.findViewById(R.id.iv_thumb);
             viewHolder.mTvUsername = (TextView) convertView.findViewById(R.id.tv_username);
@@ -63,13 +67,13 @@ public class MessageGroupAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        if (viewHolder.position != position) {
-            MessageGroup messageGroup = (MessageGroup) getItem(position);
+//        if (viewHolder.position != position) {
+            MessageGroup messageGroup = getItem(position);
 
             if (messageGroup.isNewMessage()) {
-                viewHolder.mParent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.primary));
+                viewHolder.mParent.setBackgroundColor(ContextCompat.getColor(context, R.color.primary));
             } else {
-                viewHolder.mParent.setBackgroundColor(ContextCompat.getColor(mContext, android.R.color.transparent));
+                viewHolder.mParent.setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent));
             }
 
             viewHolder.mTvUsername.setText(messageGroup.getUser().getUsername());
@@ -79,15 +83,29 @@ public class MessageGroupAdapter extends BaseAdapter {
             User user = messageGroup.getUser();
 
             if (user.getSex() == User.FEMALE) {
-                viewHolder.mTvUsername.setTextColor(ContextCompat.getColor(mContext, R.color.purple));
-                Global.IMAGE_LOADER.displayImage(messageGroup.getUser().getThumb(), viewHolder.mIvThumb, ImageUtil.displayFemalePhotoOptions);
+                viewHolder.mTvUsername.setTextColor(ContextCompat.getColor(context, R.color.purple));
+//                Global.IMAGE_LOADER.displayImage(messageGroup.getUser().getThumb(), viewHolder.mIvThumb, ImageUtil.displayFemalePhotoOptions);
+                Glide.with(BaseApplication_.getInstance()).load(messageGroup.getUser().getThumb()).listener(new RequestListener<String, GlideDrawable>() {
+                    @Override
+                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        Log.e("TAG", e.getMessage(), e);
+                        Log.e("TAG", model);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        return false;
+                    }
+                }).into(viewHolder.mIvThumb);
             } else if (user.getSex() == User.MALE) {
-                viewHolder.mTvUsername.setTextColor(ContextCompat.getColor(mContext, R.color.blue));
-                Global.IMAGE_LOADER.displayImage(user.getThumb(), viewHolder.mIvThumb, ImageUtil.displayMalePhotoOptions);
+                viewHolder.mTvUsername.setTextColor(ContextCompat.getColor(context, R.color.blue));
+//                Global.IMAGE_LOADER.displayImage(user.getThumb(), viewHolder.mIvThumb, ImageUtil.displayMalePhotoOptions);
+                Glide.with(context).load(messageGroup.getUser().getThumb()).into(viewHolder.mIvThumb);
             }
 
             viewHolder.position = position;
-        }
+//        }
 
         return convertView;
     }

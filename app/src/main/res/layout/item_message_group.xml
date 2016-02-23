@@ -19,6 +19,7 @@
         android:layout_toEndOf="@+id/iv_thumb"
         android:layout_toLeftOf="@+id/tv_time"
         android:layout_toStartOf="@+id/tv_time"
+        android:text="ASDF"
         android:textStyle="bold|italic" />
 
     <TextView

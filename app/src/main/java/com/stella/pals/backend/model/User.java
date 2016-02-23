@@ -1,29 +1,24 @@
 package com.stella.pals.backend.model;
 
-import com.raizlabs.android.dbflow.annotation.ModelContainer;
-import com.raizlabs.android.dbflow.annotation.PrimaryKey;
-import com.raizlabs.android.dbflow.annotation.Table;
-import com.raizlabs.android.dbflow.structure.BaseModel;
-import com.stella.pals.backend.PalsDatabase;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by DJ on 3/11/15.
  * Project: Stella Pals
  */
-@ModelContainer
-@Table(database = PalsDatabase.class, allFields = true)
-public class User extends BaseModel {
+public class User extends RealmObject {
 
     public static final int MALE = 1;
     public static final int FEMALE = 2;
 
     @PrimaryKey
-    String id;
-    String username;
-    String name;
-    String thumb;
-    int age;
-    int sex;
+    private String id;
+    private String username;
+    private String name;
+    private String thumb;
+    private int age;
+    private int sex;
 
     public User() {}
 

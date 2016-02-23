@@ -1,12 +1,17 @@
-package com.stella.pals.jobmanager;
+package com.stella.pals.job;
 
 import com.path.android.jobqueue.Job;
+import com.path.android.jobqueue.Params;
 
 /**
  * Created by Asa on 2016/01/24.
  * StellaPals
  */
 public class RegisterJob extends Job {
+
+    protected RegisterJob(Params params) {
+        super(params);
+    }
 
     @Override
     public void onAdded() {

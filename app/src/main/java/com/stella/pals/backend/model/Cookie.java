@@ -1,34 +1,25 @@
 package com.stella.pals.backend.model;
 
-import com.raizlabs.android.dbflow.annotation.PrimaryKey;
-import com.raizlabs.android.dbflow.annotation.Table;
-import com.raizlabs.android.dbflow.structure.BaseModel;
-import com.stella.pals.backend.PalsDatabase;
-
 import java.util.Map;
+
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by DJ on 2016/01/24.
  * Project: Stella Pals
  */
-@Table(database = PalsDatabase.class, allFields = true)
-public class Cookie extends BaseModel {
+public class Cookie extends RealmObject {
 
     @PrimaryKey
-    String key;
-    String value;
+    private String key;
+    private String value;
 
     public Cookie() {}
 
     public Cookie(Map.Entry<String, String> entry) {
         key = entry.getKey();
         value = entry.getValue();
-
-        if (exists()) {
-            update();
-        } else {
-            save();
-        }
     }
 
     public String getKey() {
@@ -37,5 +28,13 @@ public class Cookie extends BaseModel {
 
     public String getValue() {
         return value;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 }

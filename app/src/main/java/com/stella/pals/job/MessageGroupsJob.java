@@ -1,21 +1,27 @@
-package com.stella.pals.jobmanager;
+package com.stella.pals.job;
 
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
-import com.stella.pals.backend.api.APIConstants;
-import com.stella.pals.backend.api.APIManager;
-import com.stella.pals.backend.api.APIParams;
 import com.stella.pals.backend.model.MessageGroup;
 import com.stella.pals.backend.model.User;
 import com.stella.pals.frontend.base.BaseApplication;
 import com.stella.pals.frontend.global.Global;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import de.greenrobot.event.EventBus;
+import java.io.IOException;
+
+import io.realm.Realm;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by DJ on 5/12/15.
@@ -24,12 +30,10 @@ import de.greenrobot.event.EventBus;
 public class MessageGroupsJob extends Job {
 
     private static final String TAG = MessageGroupsJob.class.getSimpleName();
-    private boolean network;
     private int page;
 
-    public MessageGroupsJob(boolean network, int page) {
-        super(new Params(Global.JOB_PRORITY_1).setRequiresNetwork(network).persist());
-        this.network = network;
+    public MessageGroupsJob(int page) {
+        super(new Params(Global.JOB_PRORITY_1).requireNetwork().persist());
         this.page = page;
     }
 
@@ -40,11 +44,15 @@ public class MessageGroupsJob extends Job {
 
     @Override
     public void onRun() throws Throwable {
-        if (network) {
-            new APIManager(BaseApplication.getInstance(), APIConstants.PM, APIParams.messageGroup(page), true) {
-                @Override
-                public void onPostTask() {
-                    Elements threads = documentSoup.getElementById("threads_left").children();
+        BaseApplication.getInstance().getApiService().getMessageGroups("paged", page).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    Document document = Jsoup.parse(response.body().string());
+
+                    Realm realm = Realm.getInstance(getApplicationContext());
+
+                    Elements threads = document.getElementById("threads_left").children();
                     int size = threads.size();
                     for (int x = 0; x < size; x++) {
                         try {
@@ -58,6 +66,9 @@ public class MessageGroupsJob extends Job {
                             if (thumb.isEmpty()) {
                                 thumb = currentThread.getElementsByClass("th_user_thumb").get(0).getElementsByClass("thumb").get(1).attr("src");
                             }
+                            if (thumb.startsWith("//")) {
+                                thumb = "http:" + thumb;
+                            }
                             String time = currentThread.getElementsByClass("tui_last_time").text();
                             String ageStr = userInfo.get(0).getElementsByClass("tui_age").get(0).text();
                             int age = 0;
@@ -69,29 +80,25 @@ public class MessageGroupsJob extends Job {
                             boolean newMessage = currentThread.hasClass("new");
 
                             String message = currentThread.getElementsByClass("th_snippet").get(0).ownText();
+
                             MessageGroup messageGroup = new MessageGroup(user, message, time, newMessage);
-                            if (messageGroup.exists()) {
-                                messageGroup.update();
-                            } else {
-                                messageGroup.save();
-                            }
-                            Global.messageGroups.add(messageGroup);
+                            realm.beginTransaction();
+                            realm.copyToRealmOrUpdate(messageGroup);
+                            realm.commitTransaction();
                         } catch (NumberFormatException e) {
                             Log.e(TAG, e.getMessage(), e);
                         }
                     }
-
-                    EventBus.getDefault().post(true);
-
-                    Global.lastPage++;
-                    Global.updatingMessageGroups = false;
-
-                    super.onPostTask();
+                } catch (IOException e) {
+                    Crashlytics.logException(e);
                 }
-            }.execute();
-        } else {
-            BaseApplication.getInstance().getNetworkJobManager().addJob(new MessageGroupsJob(true, 1));
-        }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
     }
 
     @Override
