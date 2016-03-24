@@ -4,13 +4,13 @@
     android:id="@+id/parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.stella.pals.frontend.thread.ThreadActivity">
+    tools:context="com.stella.pals.views.thread.ThreadActivity">
 
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
 
-    <com.stella.pals.custom.SwipeRefreshLayoutBottom
+    <com.stella.pals.views.custom.SwipeRefreshLayoutBottom
         android:id="@+id/refresh_layout"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -24,6 +24,6 @@
             android:stackFromBottom="true"
             android:focusable="false"/>
 
-    </com.stella.pals.custom.SwipeRefreshLayoutBottom>
+    </com.stella.pals.views.custom.SwipeRefreshLayoutBottom>
 
 </RelativeLayout>

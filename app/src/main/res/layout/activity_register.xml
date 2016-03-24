@@ -3,7 +3,9 @@
     android:id="@+id/parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.stella.pals.frontend.register.RegisterActivity">
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
+    tools:context="com.stella.pals.views.register.RegisterActivity">
 
     <include
         android:id="@+id/toolbar"
@@ -35,7 +37,6 @@
                     <EditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/h_username"
                         android:inputType="text"/>
 
                     </android.support.design.widget.TextInputLayout>
@@ -49,7 +50,6 @@
                     <EditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/h_email"
                         android:inputType="textEmailAddress"/>
 
                 </android.support.design.widget.TextInputLayout>
@@ -63,7 +63,6 @@
                     <EditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/h_password"
                         android:inputType="textPassword"/>
 
                 </android.support.design.widget.TextInputLayout>

@@ -8,21 +8,21 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".frontend.base.BaseApplication_"
+        android:name=".views.base.BaseApplication_"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".frontend.MainActivity_"
+            android:name=".views.MainActivity_"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".frontend.login.LoginActivity_"
+            android:name=".views.login.LoginActivity_"
             android:label="@string/title_activity_login"
             android:windowSoftInputMode="adjustResize">
         </activity>
         <activity
-            android:name=".frontend.splash.SplashActivity_"
+            android:name=".views.splash.SplashActivity_"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,9 +31,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".frontend.register.RegisterActivity_"
+            android:name=".views.register.RegisterActivity_"
             android:label="@string/title_activity_register" />
-        <activity android:name=".frontend.thread.ThreadActivity_" />
+        <activity android:name=".views.thread.ThreadActivity_" />
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="e109d2fc2272b96de4a6a8cf0fc9aeb05c84f439" />
